@@ -1,12 +1,12 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
 import { Heart, X, Star, MapPin } from "lucide-react";
 
 const MOCK_PROFILES = [
-  { id: 1, name: "Ana Clara", age: 21, course: "Publicidade e Propaganda", period: "5º período", bio: "Amo café, séries e boas conversas ☕", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=800&fit=crop", interests: ["🎵 Música", "📸 Fotografia", "📚 Leitura"] },
+  { id: 1, name: "Ana Clara", age: 21, course: "Psicologia", period: "5º período", bio: "Amo café, séries e boas conversas ☕", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=800&fit=crop", interests: ["🎵 Música", "📸 Fotografia", "📚 Leitura"] },
   { id: 2, name: "Mariana", age: 20, course: "Administração", period: "3º período", bio: "Futura CEO e amante de café 💼", photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=800&fit=crop", interests: ["🎬 Cinema", "🍕 Gastronomia", "✈️ Viagens"] },
   { id: 3, name: "Juliana", age: 22, course: "Design", period: "7º período", bio: "Criando o mundo, um pixel de cada vez 🎨", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&h=800&fit=crop", interests: ["💪 Academia", "🎸 Rock", "🎮 Games"] },
-  { id: 4, name: "Beatriz", age: 19, course: "Marketing", period: "2º período", bio: "Criativa por natureza ✨", photo: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&h=800&fit=crop", interests: ["🎨 Arte", "📸 Fotografia", "🎵 Música"] },
+  { id: 4, name: "Beatriz", age: 19, course: "Direito", period: "2º período", bio: "Criativa por natureza ✨", photo: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&h=800&fit=crop", interests: ["🎨 Arte", "📸 Fotografia", "🎵 Música"] },
 ];
 
 const SwipeCard = ({ profile, onSwipe, isTop }: { profile: typeof MOCK_PROFILES[0]; onSwipe: (dir: "left" | "right") => void; isTop: boolean }) => {
@@ -89,10 +89,10 @@ const Discover = () => {
   return (
     <div className="min-h-screen bg-background dark px-4 pt-4">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold font-display text-gradient-espm">Descobrir</h1>
+        <h1 className="text-2xl font-bold font-display text-gradient-uniavan">Descobrir</h1>
         <div className="flex items-center gap-1 text-muted-foreground text-xs">
           <MapPin className="w-3.5 h-3.5" />
-          <span>Campus ESPM</span>
+          <span>Campus Uniavan</span>
         </div>
       </div>
 
@@ -116,11 +116,11 @@ const Discover = () => {
           <button onClick={() => handleSwipe("left")} className="w-14 h-14 rounded-full bg-muted/50 border border-border/50 flex items-center justify-center shadow-lg hover:bg-destructive/20 hover:border-destructive/50 transition-all active:scale-90">
             <X className="w-7 h-7 text-destructive" />
           </button>
-          <button onClick={() => handleSwipe("right")} className="w-16 h-16 rounded-full gradient-espm-horizontal flex items-center justify-center shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-90">
+          <button onClick={() => handleSwipe("right")} className="w-16 h-16 rounded-full gradient-uniavan-horizontal flex items-center justify-center shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-90">
             <Heart className="w-8 h-8 text-white fill-white" />
           </button>
-          <button className="w-14 h-14 rounded-full bg-muted/50 border border-border/50 flex items-center justify-center shadow-lg hover:bg-espm-wine/20 hover:border-espm-wine/50 transition-all active:scale-90">
-            <Star className="w-7 h-7 text-espm-wine" />
+          <button className="w-14 h-14 rounded-full bg-muted/50 border border-border/50 flex items-center justify-center shadow-lg hover:bg-secondary/20 hover:border-secondary/50 transition-all active:scale-90">
+            <Star className="w-7 h-7 text-secondary" />
           </button>
         </div>
       )}
@@ -130,7 +130,7 @@ const Discover = () => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md px-6">
             <motion.div initial={{ scale: 0.5, y: 50 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.5, opacity: 0 }} className="text-center">
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring", bounce: 0.5 }} className="text-6xl mb-4">🎉</motion.div>
-              <h2 className="text-4xl font-bold font-display text-gradient-espm mb-2">É um match!</h2>
+              <h2 className="text-4xl font-bold font-display text-gradient-uniavan mb-2">É um match!</h2>
               <p className="text-white/70 mb-8">Você e {matchedProfile.name} se curtiram</p>
               <div className="flex items-center justify-center gap-4 mb-8">
                 <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary shadow-lg shadow-primary/30">
@@ -142,7 +142,7 @@ const Discover = () => {
                 </div>
               </div>
               <div className="space-y-3">
-                <button onClick={() => setShowMatch(false)} className="w-full h-12 rounded-2xl gradient-espm-horizontal text-white font-semibold shadow-lg">Enviar mensagem</button>
+                <button onClick={() => setShowMatch(false)} className="w-full h-12 rounded-2xl gradient-uniavan-horizontal text-white font-semibold shadow-lg">Enviar mensagem</button>
                 <button onClick={() => setShowMatch(false)} className="w-full h-12 rounded-2xl bg-white/10 text-white font-medium">Continuar vendo</button>
               </div>
             </motion.div>

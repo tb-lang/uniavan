@@ -2,19 +2,19 @@ import { motion } from "framer-motion";
 import { GraduationCap, BookOpen, Calendar, Lightbulb, Users, FileText, ExternalLink, Building2 } from "lucide-react";
 
 const services = [
-  { icon: GraduationCap, label: "Portal do Aluno", desc: "Notas, faltas e boletim", url: "https://www.espm.br", color: "bg-primary/15 text-primary" },
-  { icon: BookOpen, label: "Biblioteca", desc: "Acervo e reservas online", url: "https://www.espm.br", color: "bg-espm-wine/15 text-espm-wine" },
-  { icon: FileText, label: "Secretaria / RA", desc: "Documentos e requerimentos", url: "https://www.espm.br", color: "bg-primary/15 text-primary" },
-  { icon: Calendar, label: "Calendário Acadêmico", desc: "Datas importantes e provas", url: "https://www.espm.br", color: "bg-espm-wine/15 text-espm-wine" },
-  { icon: Users, label: "Eventos", desc: "Palestras, workshops e festas", url: "https://www.espm.br", color: "bg-primary/15 text-primary" },
-  { icon: Lightbulb, label: "ESPM Labs", desc: "Inovação e projetos criativos", url: "https://www.espm.br", color: "bg-espm-wine/15 text-espm-wine" },
-  { icon: Building2, label: "ESPM Empresas", desc: "Soluções corporativas", url: "https://www.espm.br", color: "bg-primary/15 text-primary" },
+  { icon: GraduationCap, label: "Portal do Aluno", desc: "Notas, faltas e boletim", url: "https://unimestre.avantis.edu.br/projetos/portal_online", color: "bg-primary/15 text-primary" },
+  { icon: BookOpen, label: "Biblioteca", desc: "Acervo e reservas online", url: "https://uniavan.edu.br/biblioteca", color: "bg-secondary/15 text-secondary" },
+  { icon: FileText, label: "Secretaria / RA", desc: "Documentos e requerimentos", url: "https://uniavan.edu.br/central", color: "bg-primary/15 text-primary" },
+  { icon: Calendar, label: "Calendário Acadêmico", desc: "Datas importantes e provas", url: "https://uniavan.edu.br/central", color: "bg-secondary/15 text-secondary" },
+  { icon: Users, label: "Eventos", desc: "Palestras, workshops e festas", url: "https://blog.uniavan.edu.br/", color: "bg-primary/15 text-primary" },
+  { icon: Lightbulb, label: "Extensão", desc: "Projetos de extensão e pesquisa", url: "https://uniavan.edu.br/extensao_", color: "bg-secondary/15 text-secondary" },
+  { icon: Building2, label: "Unidades", desc: "Campus e polos da Uniavan", url: "https://uniavan.edu.br/unidades", color: "bg-primary/15 text-primary" },
 ];
 
 const Services = () => {
   return (
     <div className="min-h-screen bg-background dark px-4 pt-4 pb-24">
-      <h1 className="text-2xl font-bold font-display text-gradient-espm mb-1">Serviços ESPM</h1>
+      <h1 className="text-2xl font-bold font-display text-gradient-uniavan mb-1">Serviços Uniavan</h1>
       <p className="text-sm text-muted-foreground mb-6">Tudo que você precisa em um só lugar</p>
 
       <div className="space-y-2">

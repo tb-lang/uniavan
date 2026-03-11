@@ -12,35 +12,36 @@
     --card-foreground: 0 0% 15%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 15%;
-    --primary: 350 70% 32%;
+    --primary: 272 52% 36%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 20%;
+    --secondary: 95 55% 50%;
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 92%;
     --muted-foreground: 0 0% 45%;
-    --accent: 350 70% 32%;
+    --accent: 272 52% 36%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 87%;
     --input: 0 0% 87%;
-    --ring: 350 70% 32%;
+    --ring: 272 52% 36%;
     --radius: 1rem;
 
-    --espm-red: 350 70% 32%;
-    --espm-charcoal: 0 0% 20%;
-    --espm-charcoal-deep: 0 0% 12%;
-    --espm-wine: 350 60% 28%;
-    --espm-gray: 0 0% 92%;
+    --uniavan-purple: 272 52% 36%;
+    --uniavan-purple-deep: 272 60% 25%;
+    --uniavan-green: 95 55% 50%;
+    --uniavan-charcoal: 0 0% 20%;
+    --uniavan-charcoal-deep: 0 0% 12%;
+    --uniavan-gray: 0 0% 92%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 20%;
-    --sidebar-primary: 350 70% 32%;
+    --sidebar-primary: 272 52% 36%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 95%;
     --sidebar-accent-foreground: 0 0% 20%;
     --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 350 70% 32%;
+    --sidebar-ring: 272 52% 36%;
   }
 
   .dark {
@@ -50,28 +51,28 @@
     --card-foreground: 0 0% 95%;
     --popover: 0 0% 12%;
     --popover-foreground: 0 0% 95%;
-    --primary: 350 70% 40%;
+    --primary: 272 52% 45%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 350 55% 35%;
+    --secondary: 95 55% 50%;
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 16%;
     --muted-foreground: 0 0% 55%;
-    --accent: 350 70% 40%;
+    --accent: 272 52% 45%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 350 70% 40%;
+    --ring: 272 52% 45%;
 
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 350 70% 40%;
+    --sidebar-primary: 272 52% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 16%;
     --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 0 0% 16%;
-    --sidebar-ring: 350 70% 40%;
+    --sidebar-ring: 272 52% 45%;
   }
 }
 
@@ -89,20 +90,23 @@
 }
 
 @layer utilities {
-  .gradient-espm {
-    background: linear-gradient(135deg, hsl(350 70% 32%), hsl(350 60% 28%), hsl(0 0% 20%));
+  .gradient-uniavan {
+    background: linear-gradient(135deg, hsl(272 52% 36%), hsl(272 60% 25%), hsl(0 0% 15%));
   }
-  .gradient-espm-horizontal {
-    background: linear-gradient(90deg, hsl(350 70% 38%), hsl(350 55% 30%));
+  .gradient-uniavan-horizontal {
+    background: linear-gradient(90deg, hsl(272 52% 42%), hsl(272 60% 30%));
   }
-  .gradient-wine {
-    background: linear-gradient(135deg, hsl(350 70% 38%), hsl(350 60% 32%));
+  .gradient-uniavan-accent {
+    background: linear-gradient(135deg, hsl(272 52% 42%), hsl(95 55% 50%));
+  }
+  .gradient-purple {
+    background: linear-gradient(135deg, hsl(272 52% 42%), hsl(272 52% 36%));
   }
   .gradient-charcoal {
     background: linear-gradient(135deg, hsl(0 0% 20%), hsl(0 0% 12%));
   }
-  .text-gradient-espm {
-    background: linear-gradient(135deg, hsl(350 70% 45%), hsl(350 60% 35%));
+  .text-gradient-uniavan {
+    background: linear-gradient(135deg, hsl(272 52% 50%), hsl(95 55% 50%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

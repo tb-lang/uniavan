@@ -9,22 +9,22 @@ const Welcome = () => {
   return (
     <div className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center px-6">
       {/* Animated gradient background */}
-      <div className="absolute inset-0 gradient-espm" />
+      <div className="absolute inset-0 gradient-uniavan" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
       
       {/* Floating orbs */}
       <motion.div
-        className="absolute top-20 left-10 w-32 h-32 rounded-full bg-espm-wine/20 blur-3xl"
+        className="absolute top-20 left-10 w-32 h-32 rounded-full bg-uniavan-purple/20 blur-3xl"
         animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-32 right-8 w-40 h-40 rounded-full bg-espm-red/20 blur-3xl"
+        className="absolute bottom-32 right-8 w-40 h-40 rounded-full bg-uniavan-green/20 blur-3xl"
         animate={{ y: [0, 15, 0], x: [0, -10, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute top-1/3 right-16 w-24 h-24 rounded-full bg-espm-charcoal/30 blur-2xl"
+        className="absolute top-1/3 right-16 w-24 h-24 rounded-full bg-uniavan-charcoal/30 blur-2xl"
         animate={{ y: [0, -15, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -38,7 +38,7 @@ const Welcome = () => {
           transition={{ type: "spring", duration: 1, bounce: 0.4 }}
           className="mb-6"
         >
-          <div className="w-24 h-24 rounded-3xl gradient-wine flex items-center justify-center shadow-2xl shadow-espm-red/30">
+          <div className="w-24 h-24 rounded-3xl gradient-purple flex items-center justify-center shadow-2xl shadow-uniavan-purple/30">
             <Heart className="w-12 h-12 text-white fill-white" />
           </div>
         </motion.div>
@@ -50,7 +50,7 @@ const Welcome = () => {
           transition={{ delay: 0.3, duration: 0.6 }}
         >
           <h1 className="text-5xl font-bold font-display text-white mb-1 tracking-tight">
-            ESPM
+            Uniavan
           </h1>
           <div className="flex items-center gap-2 justify-center mb-6">
             <span className="text-2xl font-semibold text-white/90 font-display">Connect</span>
@@ -77,7 +77,7 @@ const Welcome = () => {
         >
           <Button
             onClick={() => navigate("/register")}
-            className="w-full h-14 text-lg font-semibold rounded-2xl bg-white text-espm-charcoal border-0 shadow-lg shadow-white/20 hover:shadow-white/40 transition-all duration-300 hover:scale-[1.02] hover:bg-white/90"
+            className="w-full h-14 text-lg font-semibold rounded-2xl bg-white text-uniavan-charcoal border-0 shadow-lg shadow-white/20 hover:shadow-white/40 transition-all duration-300 hover:scale-[1.02] hover:bg-white/90"
           >
             Criar Conta
           </Button>
@@ -97,7 +97,7 @@ const Welcome = () => {
           transition={{ delay: 1, duration: 0.6 }}
           className="mt-8 text-xs text-white/40"
         >
-          Exclusivo para alunos da ESPM
+          Exclusivo para alunos da Uniavan
         </motion.p>
       </div>
     </div>

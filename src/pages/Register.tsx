@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 
-const CURSOS_ESPM = [
-  "Administração", "Cinema e Audiovisual", "Ciências Sociais e do Consumo",
-  "Comunicação Social – Jornalismo", "Comunicação Social – Publicidade e Propaganda",
-  "Design", "Design de Interiores", "Engenharia de Produção",
-  "Jornalismo", "Marketing", "Negócios Digitais",
-  "Publicidade e Propaganda", "Relações Internacionais", "Sistemas de Informação",
-  "Tecnologia em Marketing", "Tecnologia em Produção Multimídia",
+const CURSOS_UNIAVAN = [
+  "Administração", "Agronomia", "Arquitetura e Urbanismo", "Biomedicina",
+  "Ciência da Computação", "Ciências Contábeis", "Design", "Direito",
+  "Educação Física", "Enfermagem", "Engenharia Civil", "Engenharia de Produção",
+  "Engenharia Mecânica", "Engenharia Química", "Farmácia", "Fisioterapia",
+  "Gastronomia", "Gestão Comercial", "Gestão de Recursos Humanos",
+  "Marketing", "Medicina Veterinária", "Nutrição", "Odontologia",
+  "Pedagogia", "Psicologia", "Publicidade e Propaganda", "Sistemas de Informação",
 ];
 
 const INTERESSES = [
@@ -73,7 +74,7 @@ const Register = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Código de Matrícula</label>
               <Input placeholder="Ex: 2024010001" value={form.matricula} onChange={e => updateForm("matricula", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50" />
-              <p className="text-xs text-muted-foreground">Seu código de matrícula da ESPM</p>
+              <p className="text-xs text-muted-foreground">Seu código de matrícula da Uniavan</p>
             </div>
           </div>
         );
@@ -97,7 +98,7 @@ const Register = () => {
               <label className="text-sm font-medium text-foreground">Curso</label>
               <select value={form.curso} onChange={e => updateForm("curso", e.target.value)} className="w-full h-12 rounded-xl bg-muted/50 border border-border/50 px-3 text-foreground text-sm">
                 <option value="">Selecione seu curso</option>
-                {CURSOS_ESPM.map(c => <option key={c} value={c}>{c}</option>)}
+                {CURSOS_UNIAVAN.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div className="space-y-2">
@@ -158,7 +159,7 @@ const Register = () => {
                     onClick={() => toggleInteresse(interesse)}
                     className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                       form.interesses.includes(interesse)
-                        ? 'gradient-espm-horizontal text-white shadow-md'
+                        ? 'gradient-uniavan-horizontal text-white shadow-md'
                         : 'bg-muted/50 text-muted-foreground hover:bg-muted'
                     }`}
                   >
@@ -172,7 +173,7 @@ const Register = () => {
       case 6:
         return (
           <div className="space-y-4">
-            <div className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-espm-wine/10 border border-primary/20">
+            <div className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-uniavan-green/10 border border-primary/20">
               <Instagram className="w-8 h-8 text-primary" />
               <div>
                 <p className="text-sm font-medium text-foreground">Instagram</p>
@@ -203,7 +204,7 @@ const Register = () => {
   return (
     <div className="relative min-h-screen flex flex-col dark">
       <div className="absolute inset-0 bg-background" />
-      <div className="absolute top-0 left-0 right-0 h-48 gradient-espm opacity-10 blur-3xl" />
+      <div className="absolute top-0 left-0 right-0 h-48 gradient-uniavan opacity-10 blur-3xl" />
 
       <div className="relative z-10 flex flex-col min-h-screen px-6 pt-4 pb-8">
         <div className="flex items-center justify-between mb-4">
@@ -215,7 +216,7 @@ const Register = () => {
 
         <div className="mb-6 h-1.5 bg-muted/50 rounded-full overflow-hidden">
           <motion.div
-            className="h-full gradient-espm-horizontal rounded-full"
+            className="h-full gradient-uniavan-horizontal rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
             transition={{ duration: 0.3 }}
@@ -233,7 +234,7 @@ const Register = () => {
           >
             <h2 className="text-2xl font-bold font-display text-foreground mb-1">{stepTitles[step - 1]}</h2>
             <p className="text-sm text-muted-foreground mb-6">
-              {step === 1 && "Crie sua conta com seu código de matrícula ESPM"}
+              {step === 1 && "Crie sua conta com seu código de matrícula Uniavan"}
               {step === 2 && "Como os outros alunos vão te ver"}
               {step === 3 && "Mostre de que curso você é"}
               {step === 4 && "Fotos fazem toda a diferença 📸"}
@@ -247,7 +248,7 @@ const Register = () => {
         <div className="mt-8">
           <Button
             onClick={() => step < TOTAL_STEPS ? setStep(step + 1) : handleSubmit()}
-            className="w-full h-14 text-lg font-semibold rounded-2xl gradient-espm-horizontal text-white border-0 shadow-lg shadow-primary/30 transition-all duration-300"
+            className="w-full h-14 text-lg font-semibold rounded-2xl gradient-uniavan-horizontal text-white border-0 shadow-lg shadow-primary/30 transition-all duration-300"
           >
             {step < TOTAL_STEPS ? (
               <span className="flex items-center gap-2">Continuar <ArrowRight className="w-5 h-5" /></span>

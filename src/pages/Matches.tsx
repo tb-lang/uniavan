@@ -18,7 +18,7 @@ const Matches = () => {
 
   return (
     <div className="min-h-screen bg-background dark px-4 pt-4">
-      <h1 className="text-2xl font-bold font-display text-gradient-espm mb-4">Matches</h1>
+      <h1 className="text-2xl font-bold font-display text-gradient-uniavan mb-4">Matches</h1>
 
       <div className="relative mb-5">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -31,7 +31,7 @@ const Matches = () => {
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
             {RECENT_MATCHES.map((match, i) => (
               <motion.div key={match.id} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }} className="flex flex-col items-center gap-1.5 flex-shrink-0">
-                <div className="w-16 h-16 rounded-full p-0.5 gradient-espm-horizontal">
+                <div className="w-16 h-16 rounded-full p-0.5 gradient-uniavan-horizontal">
                   <img src={match.photo} alt={match.name} className="w-full h-full object-cover rounded-full border-2 border-background" />
                 </div>
                 <span className="text-xs text-foreground font-medium">{match.name.split(" ")[0]}</span>
@@ -49,7 +49,7 @@ const Matches = () => {
               <div className="relative">
                 <img src={match.photo} alt={match.name} className="w-14 h-14 rounded-full object-cover" />
                 {match.unread > 0 && (
-                  <div className="absolute -top-0.5 -right-0.5 w-5 h-5 gradient-espm-horizontal rounded-full flex items-center justify-center">
+                  <div className="absolute -top-0.5 -right-0.5 w-5 h-5 gradient-uniavan-horizontal rounded-full flex items-center justify-center">
                     <span className="text-[10px] font-bold text-white">{match.unread}</span>
                   </div>
                 )}

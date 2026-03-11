@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const MOCK_PROFILE = {
   name: "Carlos Eduardo",
   age: 22,
-  course: "Marketing",
+  course: "Administração",
   period: "6º período",
   bio: "Dev, gamer e amante de café. Sempre de bom humor e pronto para uma boa conversa 🎮☕",
   instagram: "@carlosedu",
@@ -33,7 +33,7 @@ const Profile = () => {
       </div>
 
       <div className="px-5 pb-24 -mt-2">
-        <Button className="w-full h-12 rounded-2xl gradient-espm-horizontal text-white font-semibold mb-6 shadow-lg shadow-primary/20">
+        <Button className="w-full h-12 rounded-2xl gradient-uniavan-horizontal text-white font-semibold mb-6 shadow-lg shadow-primary/20">
           <Edit3 className="w-4 h-4 mr-2" />
           Editar Perfil
         </Button>
@@ -43,7 +43,7 @@ const Profile = () => {
           <p className="text-foreground text-sm leading-relaxed">{MOCK_PROFILE.bio}</p>
         </div>
 
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-primary/10 to-espm-wine/10 border border-primary/10 mb-6">
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-primary/10 to-uniavan-green/10 border border-primary/10 mb-6">
           <Instagram className="w-5 h-5 text-primary" />
           <span className="text-sm font-medium text-foreground">{MOCK_PROFILE.instagram}</span>
         </div>
@@ -52,7 +52,7 @@ const Profile = () => {
           <h2 className="text-sm font-semibold text-muted-foreground mb-2">Interesses</h2>
           <div className="flex flex-wrap gap-2">
             {MOCK_PROFILE.interests.map(tag => (
-              <span key={tag} className="px-3 py-1.5 rounded-full gradient-espm-horizontal text-white text-xs font-medium shadow-sm">{tag}</span>
+              <span key={tag} className="px-3 py-1.5 rounded-full gradient-uniavan-horizontal text-white text-xs font-medium shadow-sm">{tag}</span>
             ))}
           </div>
         </div>

@@ -51,12 +51,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        espm: {
-          red: "hsl(var(--espm-red))",
-          charcoal: "hsl(var(--espm-charcoal))",
-          "charcoal-deep": "hsl(var(--espm-charcoal-deep))",
-          wine: "hsl(var(--espm-wine))",
-          gray: "hsl(var(--espm-gray))",
+        uniavan: {
+          purple: "hsl(var(--uniavan-purple))",
+          "purple-deep": "hsl(var(--uniavan-purple-deep))",
+          green: "hsl(var(--uniavan-green))",
+          charcoal: "hsl(var(--uniavan-charcoal))",
+          "charcoal-deep": "hsl(var(--uniavan-charcoal-deep))",
+          gray: "hsl(var(--uniavan-gray))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
