@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const settings = [
   { icon: Bell, label: "Notificações", desc: "Matches e mensagens" },
-  { icon: MapPin, label: "Localização", desc: "Campus ESPM" },
+  { icon: MapPin, label: "Localização", desc: "Campus Uniavan" },
   { icon: Moon, label: "Aparência", desc: "Tema escuro" },
   { icon: Shield, label: "Privacidade", desc: "Controle seus dados" },
 ];
@@ -14,7 +14,7 @@ const AppSettings = () => {
 
   return (
     <div className="min-h-screen bg-background dark px-4 pt-4 pb-24">
-      <h1 className="text-2xl font-bold font-display text-gradient-espm mb-6">Configurações</h1>
+      <h1 className="text-2xl font-bold font-display text-gradient-uniavan mb-6">Configurações</h1>
 
       <div className="space-y-2 mb-8">
         {settings.map((item, i) => {
@@ -51,7 +51,7 @@ const AppSettings = () => {
         </button>
       </div>
 
-      <p className="text-center text-xs text-muted-foreground/50 mt-8">ESPM Connect v1.0.0</p>
+      <p className="text-center text-xs text-muted-foreground/50 mt-8">Uniavan Connect v1.0.0</p>
     </div>
   );
 };

@@ -19,7 +19,7 @@ const Login = () => {
   return (
     <div className="relative min-h-screen flex flex-col dark">
       <div className="absolute inset-0 bg-background" />
-      <div className="absolute top-0 left-0 right-0 h-72 gradient-espm opacity-20 blur-3xl" />
+      <div className="absolute top-0 left-0 right-0 h-72 gradient-uniavan opacity-20 blur-3xl" />
 
       <div className="relative z-10 flex flex-col min-h-screen px-6 pt-4 pb-8">
         <button onClick={() => navigate("/")} className="flex items-center gap-2 text-muted-foreground mb-8">
@@ -32,10 +32,10 @@ const Login = () => {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 mb-8"
         >
-          <div className="w-10 h-10 rounded-xl gradient-wine flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl gradient-purple flex items-center justify-center">
             <Heart className="w-5 h-5 text-white fill-white" />
           </div>
-          <span className="text-xl font-bold font-display text-foreground">ESPM Connect</span>
+          <span className="text-xl font-bold font-display text-foreground">Uniavan Connect</span>
         </motion.div>
 
         <motion.div
@@ -71,7 +71,7 @@ const Login = () => {
 
           <button type="button" className="text-sm text-primary font-medium">Esqueceu a senha?</button>
 
-          <Button type="submit" className="w-full h-14 text-lg font-semibold rounded-2xl gradient-espm-horizontal text-white border-0 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 mt-4">
+          <Button type="submit" className="w-full h-14 text-lg font-semibold rounded-2xl gradient-uniavan-horizontal text-white border-0 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 mt-4">
             Entrar
           </Button>
 

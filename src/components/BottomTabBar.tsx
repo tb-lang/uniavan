@@ -30,7 +30,7 @@ const BottomTabBar = () => {
               {isActive && (
                 <motion.div
                   layoutId="tab-indicator"
-                  className="absolute -top-0.5 w-8 h-0.5 gradient-espm-horizontal rounded-full"
+                  className="absolute -top-0.5 w-8 h-0.5 gradient-uniavan-horizontal rounded-full"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                 />
               )}
