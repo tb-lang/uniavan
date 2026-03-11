@@ -1,0 +1,53 @@
+import { Flame, MessageCircle, User, Settings, GraduationCap } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const tabs = [
+  { path: "/app", icon: Flame, label: "Descobrir" },
+  { path: "/app/matches", icon: MessageCircle, label: "Matches" },
+  { path: "/app/services", icon: GraduationCap, label: "Serviços" },
+  { path: "/app/profile", icon: User, label: "Perfil" },
+  { path: "/app/settings", icon: Settings, label: "Config" },
+];
+
+const BottomTabBar = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-border/30">
+      <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
+        {tabs.map(tab => {
+          const isActive = location.pathname === tab.path;
+          const Icon = tab.icon;
+
+          return (
+            <button
+              key={tab.path}
+              onClick={() => navigate(tab.path)}
+              className="relative flex flex-col items-center gap-0.5 py-1 px-3"
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="tab-indicator"
+                  className="absolute -top-0.5 w-8 h-0.5 gradient-espm-horizontal rounded-full"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                />
+              )}
+              <Icon
+                className={`w-5 h-5 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
+                fill={isActive && tab.icon === Flame ? "currentColor" : "none"}
+              />
+              <span className={`text-[10px] font-medium transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="h-[env(safe-area-inset-bottom)]" />
+    </div>
+  );
+};
+
+export default BottomTabBar;
