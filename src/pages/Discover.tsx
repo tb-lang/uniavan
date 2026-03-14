@@ -1,15 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
-import { Heart, X, Star, MapPin } from "lucide-react";
+import { Heart, X, Star, MapPin, SlidersHorizontal } from "lucide-react";
+import { MOCK_PROFILES } from "@/data/mockData";
+import { useUser } from "@/contexts/UserContext";
 
-const MOCK_PROFILES = [
-  { id: 1, name: "Ana Clara", age: 21, course: "Psicologia", period: "5º período", bio: "Amo café, séries e boas conversas ☕", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=800&fit=crop", interests: ["🎵 Música", "📸 Fotografia", "📚 Leitura"] },
-  { id: 2, name: "Mariana", age: 20, course: "Administração", period: "3º período", bio: "Futura CEO e amante de café 💼", photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=800&fit=crop", interests: ["🎬 Cinema", "🍕 Gastronomia", "✈️ Viagens"] },
-  { id: 3, name: "Juliana", age: 22, course: "Design", period: "7º período", bio: "Criando o mundo, um pixel de cada vez 🎨", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&h=800&fit=crop", interests: ["💪 Academia", "🎸 Rock", "🎮 Games"] },
-  { id: 4, name: "Beatriz", age: 19, course: "Direito", period: "2º período", bio: "Criativa por natureza ✨", photo: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&h=800&fit=crop", interests: ["🎨 Arte", "📸 Fotografia", "🎵 Música"] },
-];
+type Profile = typeof MOCK_PROFILES[0];
 
-const SwipeCard = ({ profile, onSwipe, isTop }: { profile: typeof MOCK_PROFILES[0]; onSwipe: (dir: "left" | "right") => void; isTop: boolean }) => {
+const SwipeCard = ({ profile, onSwipe, isTop }: { profile: Profile; onSwipe: (dir: "left" | "right") => void; isTop: boolean }) => {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const likeOpacity = useTransform(x, [0, 100], [0, 1]);
@@ -73,9 +71,11 @@ const SwipeCard = ({ profile, onSwipe, isTop }: { profile: typeof MOCK_PROFILES[
 };
 
 const Discover = () => {
+  const navigate = useNavigate();
+  const { user } = useUser();
   const [profiles, setProfiles] = useState(MOCK_PROFILES);
   const [showMatch, setShowMatch] = useState(false);
-  const [matchedProfile, setMatchedProfile] = useState<typeof MOCK_PROFILES[0] | null>(null);
+  const [matchedProfile, setMatchedProfile] = useState<Profile | null>(null);
 
   const handleSwipe = (direction: "left" | "right") => {
     const swiped = profiles[profiles.length - 1];
@@ -90,9 +90,17 @@ const Discover = () => {
     <div className="min-h-screen bg-background dark px-4 pt-4">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold font-display text-gradient-uniavan">Descobrir</h1>
-        <div className="flex items-center gap-1 text-muted-foreground text-xs">
-          <MapPin className="w-3.5 h-3.5" />
-          <span>Campus Uniavan</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 text-muted-foreground text-xs">
+            <MapPin className="w-3.5 h-3.5" />
+            <span>Campus Uniavan</span>
+          </div>
+          <button
+            onClick={() => navigate("/app/filters")}
+            className="w-8 h-8 rounded-full bg-muted/40 border border-border/30 flex items-center justify-center hover:bg-muted/60 transition-colors"
+          >
+            <SlidersHorizontal className="w-4 h-4 text-muted-foreground" />
+          </button>
         </div>
       </div>
 
@@ -134,7 +142,7 @@ const Discover = () => {
               <p className="text-white/70 mb-8">Você e {matchedProfile.name} se curtiram</p>
               <div className="flex items-center justify-center gap-4 mb-8">
                 <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary shadow-lg shadow-primary/30">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop" alt="Você" className="w-full h-full object-cover" />
+                  <img src={user.photos[0]} alt="Você" className="w-full h-full object-cover" />
                 </div>
                 <Heart className="w-8 h-8 text-primary fill-primary animate-pulse" />
                 <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary shadow-lg shadow-primary/30">
@@ -142,7 +150,7 @@ const Discover = () => {
                 </div>
               </div>
               <div className="space-y-3">
-                <button onClick={() => setShowMatch(false)} className="w-full h-12 rounded-2xl gradient-uniavan-horizontal text-white font-semibold shadow-lg">Enviar mensagem</button>
+                <button onClick={() => { setShowMatch(false); navigate(`/app/chat/${matchedProfile?.id}`); }} className="w-full h-12 rounded-2xl gradient-uniavan-horizontal text-white font-semibold shadow-lg">Enviar mensagem</button>
                 <button onClick={() => setShowMatch(false)} className="w-full h-12 rounded-2xl bg-white/10 text-white font-medium">Continuar vendo</button>
               </div>
             </motion.div>

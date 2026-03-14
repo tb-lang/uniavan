@@ -1,18 +1,24 @@
-import { Flame, MessageCircle, User, Settings, GraduationCap } from "lucide-react";
+import { Flame, MessageCircle, User, Settings, GraduationCap, Bell } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
+const UNREAD_NOTIFS = 2;
+
 const tabs = [
   { path: "/app", icon: Flame, label: "Descobrir" },
-  { path: "/app/matches", icon: MessageCircle, label: "Matches" },
+  { path: "/app/matches", icon: MessageCircle, label: "Matches", badge: 2 },
   { path: "/app/services", icon: GraduationCap, label: "Serviços" },
+  { path: "/app/notifications", icon: Bell, label: "Avisos", badge: UNREAD_NOTIFS },
   { path: "/app/profile", icon: User, label: "Perfil" },
-  { path: "/app/settings", icon: Settings, label: "Config" },
 ];
 
 const BottomTabBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const hiddenPaths = ["/app/chat/", "/app/edit-profile", "/app/user/", "/app/filters", "/app/notifications"];
+  const shouldHide = hiddenPaths.some(p => location.pathname.startsWith(p));
+  if (shouldHide) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-border/30">
@@ -34,11 +40,18 @@ const BottomTabBar = () => {
                   transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                 />
               )}
-              <Icon
-                className={`w-5 h-5 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
-                fill={isActive && tab.icon === Flame ? "currentColor" : "none"}
-              />
-              <span className={`text-[10px] font-medium transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+              <div className="relative">
+                <Icon
+                  className={`w-5 h-5 transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}
+                  fill={isActive && tab.icon === Flame ? "currentColor" : "none"}
+                />
+                {tab.badge && tab.badge > 0 && !isActive && (
+                  <div className="absolute -top-1.5 -right-1.5 w-4 h-4 gradient-uniavan-horizontal rounded-full flex items-center justify-center">
+                    <span className="text-[9px] font-bold text-white">{tab.badge}</span>
+                  </div>
+                )}
+              </div>
+              <span className={`text-[10px] font-medium transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                 {tab.label}
               </span>
             </button>

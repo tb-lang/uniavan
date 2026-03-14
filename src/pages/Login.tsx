@@ -69,7 +69,7 @@ const Login = () => {
             </div>
           </div>
 
-          <button type="button" className="text-sm text-primary font-medium">Esqueceu a senha?</button>
+          <button type="button" onClick={() => navigate("/forgot-password")} className="text-sm text-primary font-medium">Esqueceu a senha?</button>
 
           <Button type="submit" className="w-full h-14 text-lg font-semibold rounded-2xl gradient-uniavan-horizontal text-white border-0 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 mt-4">
             Entrar

@@ -1,23 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Edit3, Instagram, MapPin, BookOpen, Calendar } from "lucide-react";
+import { Edit3, Instagram, BookOpen, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const MOCK_PROFILE = {
-  name: "Carlos Eduardo",
-  age: 22,
-  course: "Administração",
-  period: "6º período",
-  bio: "Dev, gamer e amante de café. Sempre de bom humor e pronto para uma boa conversa 🎮☕",
-  instagram: "@carlosedu",
-  interests: ["🎮 Games", "💪 Academia", "🎵 Música", "🍕 Gastronomia", "📺 Séries"],
-  photos: [
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop",
-    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=500&fit=crop",
-    "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&h=500&fit=crop",
-  ],
-};
+import { useUser } from "@/contexts/UserContext";
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const MOCK_PROFILE = user;
+
   return (
     <div className="min-h-screen bg-background dark">
       <div className="relative h-80">
@@ -33,7 +24,7 @@ const Profile = () => {
       </div>
 
       <div className="px-5 pb-24 -mt-2">
-        <Button className="w-full h-12 rounded-2xl gradient-uniavan-horizontal text-white font-semibold mb-6 shadow-lg shadow-primary/20">
+        <Button onClick={() => navigate("/app/edit-profile")} className="w-full h-12 rounded-2xl gradient-uniavan-horizontal text-white font-semibold mb-6 shadow-lg shadow-primary/20">
           <Edit3 className="w-4 h-4 mr-2" />
           Editar Perfil
         </Button>
