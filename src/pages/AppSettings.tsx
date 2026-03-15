@@ -1,16 +1,19 @@
 import { motion } from "framer-motion";
-import { Bell, Shield, LogOut, Trash2, ChevronRight, MapPin, Moon } from "lucide-react";
+import { Bell, Shield, LogOut, Trash2, ChevronRight, MapPin, Moon, Heart, Plane, UserX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const settings = [
-  { icon: Bell, label: "Notificações", desc: "Matches e mensagens" },
-  { icon: MapPin, label: "Localização", desc: "Campus Uniavan" },
-  { icon: Moon, label: "Aparência", desc: "Tema escuro" },
-  { icon: Shield, label: "Privacidade", desc: "Controle seus dados" },
-];
 
 const AppSettings = () => {
   const navigate = useNavigate();
+
+  const settings = [
+    { icon: Bell, label: "Notificações", desc: "Matches e mensagens", path: null },
+    { icon: MapPin, label: "Localização", desc: "Campus Uniavan", path: null },
+    { icon: Moon, label: "Aparência", desc: "Tema escuro", path: null },
+    { icon: Shield, label: "Privacidade", desc: "Controle seus dados", path: null },
+    { icon: Heart, label: "Quem me curtiu", desc: "Veja seus admiradores", path: "/app/who-liked-me" },
+    { icon: Plane, label: "Modo Férias", desc: "Pausar meu perfil", path: "/app/vacation-mode" },
+    { icon: UserX, label: "Usuários Bloqueados", desc: "Gerenciar bloqueios", path: "/app/blocked-users" },
+  ];
 
   return (
     <div className="min-h-screen bg-background dark px-4 pt-4 pb-24">
@@ -25,6 +28,7 @@ const AppSettings = () => {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
+              onClick={() => item.path && navigate(item.path)}
               className="w-full flex items-center gap-3 p-4 rounded-2xl bg-muted/20 hover:bg-muted/40 transition-colors text-left"
             >
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -51,7 +55,7 @@ const AppSettings = () => {
         </button>
       </div>
 
-      <p className="text-center text-xs text-muted-foreground/50 mt-8">Uniavan Connect v1.0.0</p>
+      <p className="text-center text-xs text-muted-foreground/50 mt-8">Uniavan Connect v1.1.0</p>
     </div>
   );
 };

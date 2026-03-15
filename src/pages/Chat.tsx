@@ -1,10 +1,31 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Send, Instagram, MoreVertical } from "lucide-react";
+import { ArrowLeft, Send, Instagram, MoreVertical, Flag, UserX } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { MOCK_MATCHES, MOCK_MESSAGES } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
+
+const TypingIndicator = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 8 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: 8 }}
+    className="flex items-end gap-2 justify-start"
+  >
+    <div className="w-7 h-7 flex-shrink-0" />
+    <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-muted/50 flex gap-1 items-center">
+      {[0, 1, 2].map(i => (
+        <motion.div
+          key={i}
+          className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60"
+          animate={{ y: [0, -4, 0] }}
+          transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.15 }}
+        />
+      ))}
+    </div>
+  </motion.div>
+);
 
 const Chat = () => {
   const { matchId } = useParams<{ matchId: string }>();
@@ -13,11 +34,17 @@ const Chat = () => {
   const match = MOCK_MATCHES.find(m => m.id === matchId);
   const [messages, setMessages] = useState(MOCK_MESSAGES[matchId ?? ""] ?? []);
   const [text, setText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Simulate online status: match 1 is "online", others show last seen
+  const isOnline = matchId === "1";
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isTyping]);
 
   if (!match) {
     navigate("/app/matches");
@@ -31,6 +58,23 @@ const Chat = () => {
       { id: String(Date.now()), from: "me", text: text.trim(), time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) },
     ]);
     setText("");
+
+    // Simulate reply with typing indicator
+    if (matchId === "1" || matchId === "2") {
+      setTimeout(() => setIsTyping(true), 800);
+      setTimeout(() => {
+        setIsTyping(false);
+        const replies = ["Que legal! 😊", "Rsrs, com certeza!", "Me conta mais!", "Haha, verdade 😄", "Adorei saber disso!"];
+        setMessages(prev => [
+          ...prev,
+          { id: String(Date.now()), from: "them", text: replies[Math.floor(Math.random() * replies.length)], time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) },
+        ]);
+      }, 2800);
+    }
+  };
+
+  const handleInputChange = (val: string) => {
+    setText(val);
   };
 
   return (
@@ -41,10 +85,17 @@ const Chat = () => {
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
         <button onClick={() => navigate(`/app/user/${match.id}`)} className="flex items-center gap-3 flex-1">
-          <img src={match.photo} alt={match.name} className="w-10 h-10 rounded-full object-cover border border-border/30" />
+          <div className="relative">
+            <img src={match.photo} alt={match.name} className="w-10 h-10 rounded-full object-cover border border-border/30" />
+            {isOnline && (
+              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-background" />
+            )}
+          </div>
           <div className="text-left">
             <h2 className="font-semibold text-foreground text-sm">{match.name}</h2>
-            <p className="text-xs text-muted-foreground">{match.course} • {match.period}</p>
+            <p className={`text-xs ${isOnline ? "text-green-400" : "text-muted-foreground"}`}>
+              {isOnline ? "Online agora" : "Visto há pouco"}
+            </p>
           </div>
         </button>
         <div className="flex items-center gap-1">
@@ -56,9 +107,39 @@ const Chat = () => {
           >
             <Instagram className="w-5 h-5 text-muted-foreground" />
           </a>
-          <button className="p-2 rounded-full hover:bg-muted/40 transition-colors">
-            <MoreVertical className="w-5 h-5 text-muted-foreground" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(v => !v)}
+              className="p-2 rounded-full hover:bg-muted/40 transition-colors"
+            >
+              <MoreVertical className="w-5 h-5 text-muted-foreground" />
+            </button>
+            <AnimatePresence>
+              {showMenu && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: -5 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="absolute right-0 top-full mt-1 w-44 glass-strong border border-border/30 rounded-xl overflow-hidden shadow-xl z-50"
+                >
+                  <button
+                    onClick={() => { setShowMenu(false); navigate(`/app/report/${match.id}`); }}
+                    className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-muted-foreground hover:bg-muted/30 transition-colors"
+                  >
+                    <Flag className="w-4 h-4" />
+                    Reportar
+                  </button>
+                  <button
+                    onClick={() => { setShowMenu(false); navigate(`/app/block/${match.id}`); }}
+                    className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+                  >
+                    <UserX className="w-4 h-4" />
+                    Bloquear
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
@@ -99,6 +180,12 @@ const Chat = () => {
             );
           })}
         </AnimatePresence>
+
+        {/* Typing indicator */}
+        <AnimatePresence>
+          {isTyping && <TypingIndicator />}
+        </AnimatePresence>
+
         <div ref={bottomRef} />
       </div>
 
@@ -107,7 +194,7 @@ const Chat = () => {
         <div className="flex items-center gap-2">
           <Input
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={e => handleInputChange(e.target.value)}
             onKeyDown={e => e.key === "Enter" && sendMessage()}
             placeholder="Digite uma mensagem..."
             className="flex-1 h-11 rounded-2xl bg-muted/30 border-border/30 text-sm"
