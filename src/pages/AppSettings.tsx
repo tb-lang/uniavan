@@ -1,9 +1,16 @@
 import { motion } from "framer-motion";
 import { Bell, Shield, LogOut, Trash2, ChevronRight, MapPin, Moon, Heart, Plane, UserX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const AppSettings = () => {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   const settings = [
     { icon: Bell, label: "Notificações", desc: "Matches e mensagens", path: null },
