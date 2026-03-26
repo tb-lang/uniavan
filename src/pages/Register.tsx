@@ -134,12 +134,12 @@ const Register = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Email</label>
-              <Input placeholder="seu@email.com" type="email" value={form.email} onChange={e => updateForm("email", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50" />
+              <Input placeholder="seu@email.com" type="email" value={form.email} onChange={e => updateForm("email", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Senha</label>
               <div className="relative">
-                <Input type={showPassword ? "text" : "password"} placeholder="Min. 6 caracteres" value={form.password} onChange={e => updateForm("password", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 pr-12" />
+                <Input type={showPassword ? "text" : "password"} placeholder="Min. 6 caracteres" value={form.password} onChange={e => updateForm("password", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 pr-12 text-foreground placeholder:text-muted-foreground focus:border-primary" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -147,7 +147,7 @@ const Register = () => {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Código de Matrícula</label>
-              <Input placeholder="Ex: 2024010001" value={form.matricula} onChange={e => updateForm("matricula", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50" />
+              <Input placeholder="Ex: 2024010001" value={form.matricula} onChange={e => updateForm("matricula", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary" />
               <p className="text-xs text-muted-foreground">Seu código de matrícula da Uniavan</p>
             </div>
           </div>
@@ -157,11 +157,11 @@ const Register = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Nome completo</label>
-              <Input placeholder="Como você quer ser chamado(a)" value={form.nome} onChange={e => updateForm("nome", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50" />
+              <Input placeholder="Como você quer ser chamado(a)" value={form.nome} onChange={e => updateForm("nome", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Data de nascimento</label>
-              <Input type="date" value={form.nascimento} onChange={e => updateForm("nascimento", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50" />
+              <Input type="date" value={form.nascimento} onChange={e => updateForm("nascimento", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary" />
             </div>
           </div>
         );
@@ -276,7 +276,7 @@ const Register = () => {
               <label className="text-sm font-medium text-foreground">Seu @ do Instagram (opcional)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">@</span>
-                <Input placeholder="seuinstagram" value={form.instagram} onChange={e => updateForm("instagram", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 pl-8" />
+                <Input placeholder="seuinstagram" value={form.instagram} onChange={e => updateForm("instagram", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 pl-8 text-foreground placeholder:text-muted-foreground focus:border-primary" />
               </div>
             </div>
           </div>
