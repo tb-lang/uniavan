@@ -63,7 +63,11 @@ const SwipeCard = ({ profile, onSwipe, isTop }: { profile: DiscoverProfile; onSw
       exit={{ x: 300, opacity: 0, transition: { duration: 0.3 } }}
     >
       <div className="w-full h-full rounded-3xl overflow-hidden relative shadow-2xl shadow-black/30">
-        <img src={photo} alt={profile.name} className="w-full h-full object-cover" />
+        {photo ? (
+          <img src={photo} alt={profile.name} className="w-full h-full object-cover" />
+        ) : (
+          <PhotoPlaceholder />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
         <motion.div style={{ opacity: likeOpacity }} className="absolute top-8 left-6 px-4 py-2 border-4 border-green-400 rounded-xl rotate-[-20deg]">
