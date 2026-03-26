@@ -1,24 +1,19 @@
 
 
-# Fix: Texto invisível nos campos de cadastro
+# Fix: Remover foto padrão de mulher no Discover
 
 ## Problema
-Os `Input` e `select` no Register.tsx não têm a classe `text-foreground`, fazendo o texto digitado ficar escuro demais no tema dark. O Login.tsx funciona porque seus inputs incluem `text-foreground` explicitamente.
+No `src/pages/Discover.tsx` (linha 31), quando o usuário não tem foto, o fallback é uma URL do Unsplash com a foto de uma mulher. Isso é enganoso.
 
 ## Solução
-Adicionar `text-foreground` a todos os campos de input, select e textarea no Register.tsx — mesma abordagem usada no Login.tsx.
 
-### Campos afetados (7 no total):
-1. **Step 1**: Email input (linha 137), Password input (linha 142), Matrícula input (linha 150)
-2. **Step 2**: Nome input (linha 160), Data nascimento input (linha 164)
-3. **Step 3**: Curso select (linha 173) e Período select (linha 180) — já têm `text-foreground`, OK
-4. **Step 5**: Bio textarea (linha 241) — já tem `text-foreground`, OK
-5. **Step 6**: Instagram input (linha 279)
+### `src/pages/Discover.tsx`
+- Linha 31: trocar o fallback de Unsplash por `null` ou string vazia
+- Quando não houver foto, exibir um placeholder neutro (ícone de câmera ou iniciais do nome sobre fundo colorido) em vez de uma foto de outra pessoa
 
-### Mudança concreta
-Adicionar `text-foreground` à className de cada `Input` nos steps 1, 2 e 6. Exemplo:
-- De: `className="h-12 rounded-xl bg-muted/50 border-border/50"`
-- Para: `className="h-12 rounded-xl bg-muted/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary"`
+### `src/pages/UserProfile.tsx`
+- Linha 117: trocar `/placeholder.svg` por um placeholder neutro similar
 
-Isso alinha o estilo com o Login.tsx que usa `text-foreground placeholder:text-muted-foreground focus:border-primary` em todos os campos.
+### Implementação do placeholder
+- Se `photos[0]` não existe, renderizar um `div` com fundo gradient (usando as cores da marca) e as iniciais do nome do usuário centralizadas, em vez de um `<img>`
 
