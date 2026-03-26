@@ -28,13 +28,24 @@ const SwipeCard = ({ profile, onSwipe, isTop }: { profile: DiscoverProfile; onSw
     else if (info.offset.x < -100) onSwipe("left");
   };
 
-  const photo = profile.photos?.[0] || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=800&fit=crop";
+  const photo = profile.photos?.[0];
+  const initials = profile.name?.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() || "?";
+
+  const PhotoPlaceholder = ({ className = "" }: { className?: string }) => (
+    <div className={`w-full h-full flex items-center justify-center gradient-uniavan ${className}`}>
+      <span className="text-5xl font-bold text-white/80 font-display">{initials}</span>
+    </div>
+  );
 
   if (!isTop) {
     return (
       <div className="absolute inset-0">
         <div className="w-full h-full rounded-3xl overflow-hidden">
-          <img src={photo} alt={profile.name} className="w-full h-full object-cover scale-[1.02]" />
+          {photo ? (
+            <img src={photo} alt={profile.name} className="w-full h-full object-cover scale-[1.02]" />
+          ) : (
+            <PhotoPlaceholder />
+          )}
         </div>
       </div>
     );
