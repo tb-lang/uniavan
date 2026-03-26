@@ -75,7 +75,8 @@ const Register = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const result = await signUp(form.email, form.password);
+      // Sign up with name in metadata (trigger auto-creates profile)
+      const result = await signUp(form.email, form.password, { name: form.nome });
       const userId = result.user?.id;
       if (!userId) throw new Error("Erro ao criar conta");
 
@@ -99,11 +100,9 @@ const Register = () => {
         }
       }
 
-      // Insert user profile
-      const { error: insertError } = await supabase.from("users").insert({
-        id: userId,
+      // Update the profile created by trigger with additional fields
+      const { error: updateError } = await supabase.from("users").update({
         name: form.nome,
-        email: form.email,
         age: form.nascimento ? calculateAge(form.nascimento) : null,
         course: form.curso || null,
         period: form.periodo ? `${form.periodo}º período` : null,
@@ -111,9 +110,9 @@ const Register = () => {
         instagram: form.instagram ? `@${form.instagram.replace("@", "")}` : null,
         interests: form.interesses,
         photos: photoUrls,
-      });
+      }).eq("id", userId);
 
-      if (insertError) throw insertError;
+      if (updateError) throw updateError;
 
       toast({ title: "Conta criada!", description: "Bem-vindo ao Uniavan Connect 💜" });
       navigate("/onboarding");
