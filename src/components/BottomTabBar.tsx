@@ -14,7 +14,7 @@ const BottomTabBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const hiddenPaths = ["/app/chat/", "/app/edit-profile", "/app/user/", "/app/filters", "/app/notifications"];
+  const hiddenPaths = ["/app/chat/", "/app/edit-profile", "/app/user/", "/app/filters"];
   const shouldHide = hiddenPaths.some(p => location.pathname.startsWith(p));
   if (shouldHide) return null;
 
