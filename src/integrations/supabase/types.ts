@@ -14,13 +14,295 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blocked_users: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_users_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocked_users_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likes: {
+        Row: {
+          created_at: string | null
+          from_user_id: string
+          id: string
+          to_user_id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          from_user_id: string
+          id?: string
+          to_user_id: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          from_user_id?: string
+          id?: string
+          to_user_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_from_user_id_fkey"
+            columns: ["from_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_to_user_id_fkey"
+            columns: ["to_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches: {
+        Row: {
+          created_at: string | null
+          id: string
+          user1_id: string
+          user2_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user1_id: string
+          user2_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user1_id?: string
+          user2_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_user1_id_fkey"
+            columns: ["user1_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user2_id_fkey"
+            columns: ["user2_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          match_id: string
+          read_at: string | null
+          sender_id: string
+          text: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          match_id: string
+          read_at?: string | null
+          sender_id: string
+          text: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          match_id?: string
+          read_at?: string | null
+          sender_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          created_at: string | null
+          id: string
+          reason: string
+          reported_id: string
+          reporter_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reason: string
+          reported_id: string
+          reporter_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reason?: string
+          reported_id?: string
+          reporter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_reported_id_fkey"
+            columns: ["reported_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          age: number | null
+          bio: string | null
+          course: string | null
+          created_at: string | null
+          email: string
+          id: string
+          instagram: string | null
+          interests: string[] | null
+          is_active: boolean | null
+          name: string
+          period: string | null
+          photos: string[] | null
+          vacation_mode: boolean | null
+        }
+        Insert: {
+          age?: number | null
+          bio?: string | null
+          course?: string | null
+          created_at?: string | null
+          email: string
+          id: string
+          instagram?: string | null
+          interests?: string[] | null
+          is_active?: boolean | null
+          name: string
+          period?: string | null
+          photos?: string[] | null
+          vacation_mode?: boolean | null
+        }
+        Update: {
+          age?: number | null
+          bio?: string | null
+          course?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          instagram?: string | null
+          interests?: string[] | null
+          is_active?: boolean | null
+          name?: string
+          period?: string | null
+          photos?: string[] | null
+          vacation_mode?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_discover_profiles: {
+        Args: never
+        Returns: {
+          age: number | null
+          bio: string | null
+          course: string | null
+          created_at: string | null
+          email: string
+          id: string
+          instagram: string | null
+          interests: string[] | null
+          is_active: boolean | null
+          name: string
+          period: string | null
+          photos: string[] | null
+          vacation_mode: boolean | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "users"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      get_match_with_profile: {
+        Args: { p_match_id: string }
+        Returns: {
+          age: number
+          bio: string
+          course: string
+          instagram: string
+          interests: string[]
+          match_id: string
+          matched_at: string
+          name: string
+          period: string
+          photos: string[]
+          user_id: string
+        }[]
+      }
+      is_blocked: {
+        Args: { checker_id: string; target_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
