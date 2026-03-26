@@ -2,13 +2,11 @@ import { Flame, MessageCircle, User, Settings, GraduationCap, Bell } from "lucid
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-const UNREAD_NOTIFS = 2;
-
 const tabs = [
   { path: "/app", icon: Flame, label: "Descobrir" },
-  { path: "/app/matches", icon: MessageCircle, label: "Matches", badge: 2 },
+  { path: "/app/matches", icon: MessageCircle, label: "Matches" },
   { path: "/app/services", icon: GraduationCap, label: "Serviços" },
-  { path: "/app/notifications", icon: Bell, label: "Avisos", badge: UNREAD_NOTIFS },
+  { path: "/app/notifications", icon: Bell, label: "Avisos" },
   { path: "/app/profile", icon: User, label: "Perfil" },
 ];
 
