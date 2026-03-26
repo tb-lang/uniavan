@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Heart, MessageCircle, Star } from "lucide-react";
+import { ArrowLeft, Heart, MessageCircle, Star, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useUser } from "@/contexts/UserContext";
 
 type NotifType = "match" | "message" | "like";
 
@@ -14,14 +16,8 @@ interface Notification {
   time: string;
   read: boolean;
   targetId?: string;
+  sortDate: string;
 }
-
-const MOCK_NOTIFICATIONS: Notification[] = [
-  { id: "1", type: "match", name: "Ana Clara", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop", text: "Deu match com você! 🎉", time: "Agora", read: false, targetId: "1" },
-  { id: "2", type: "message", name: "Mariana", photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=200&fit=crop", text: "Enviou uma mensagem para você", time: "5min", read: false, targetId: "2" },
-  { id: "3", type: "like", name: "Juliana", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop", text: "Curtiu seu perfil ❤️", time: "1h", read: true, targetId: "3" },
-  { id: "4", type: "match", name: "Beatriz", photo: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&h=200&fit=crop", text: "Deu match com você! 🎉", time: "2h", read: true, targetId: "4" },
-];
 
 const iconFor = (type: NotifType) => {
   if (type === "match") return <Heart className="w-4 h-4 text-white fill-white" />;
@@ -35,11 +31,109 @@ const bgFor = (type: NotifType) => {
   return "bg-yellow-500";
 };
 
+const timeAgo = (dateStr: string) => {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "Agora";
+  if (mins < 60) return `${mins}min`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  return `${days}d`;
+};
+
 const Notifications = () => {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const { user } = useUser();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const markAllRead = () => setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  useEffect(() => {
+    if (!user) return;
+    const fetchNotifications = async () => {
+      setLoading(true);
+      const allNotifs: Notification[] = [];
+
+      // Fetch recent matches
+      const { data: matches } = await supabase
+        .from("matches")
+        .select("*")
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (matches) {
+        const otherIds = matches.map(m => m.user1_id === user.id ? m.user2_id : m.user1_id);
+        const { data: matchUsers } = await supabase
+          .from("users")
+          .select("id, name, photos")
+          .in("id", otherIds.length > 0 ? otherIds : ["__none__"]);
+
+        const userMap = new Map((matchUsers ?? []).map(u => [u.id, u]));
+
+        for (const m of matches) {
+          const otherId = m.user1_id === user.id ? m.user2_id : m.user1_id;
+          const other = userMap.get(otherId);
+          if (!other) continue;
+          allNotifs.push({
+            id: `match-${m.id}`,
+            type: "match",
+            name: other.name,
+            photo: other.photos?.[0] || "/placeholder.svg",
+            text: "Deu match com você! 🎉",
+            time: timeAgo(m.created_at ?? ""),
+            read: false,
+            targetId: otherId,
+            sortDate: m.created_at ?? "",
+          });
+        }
+      }
+
+      // Fetch recent likes received
+      const { data: likes } = await supabase
+        .from("likes")
+        .select("*")
+        .eq("to_user_id", user.id)
+        .in("type", ["like", "superlike"])
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (likes) {
+        const likerIds = likes.map(l => l.from_user_id);
+        const { data: likeUsers } = await supabase
+          .from("users")
+          .select("id, name, photos")
+          .in("id", likerIds.length > 0 ? likerIds : ["__none__"]);
+
+        const userMap = new Map((likeUsers ?? []).map(u => [u.id, u]));
+        // Exclude likes that already resulted in a match (to avoid duplicates)
+        const matchedUserIds = new Set(allNotifs.filter(n => n.type === "match").map(n => n.targetId));
+
+        for (const l of likes) {
+          if (matchedUserIds.has(l.from_user_id)) continue;
+          const other = userMap.get(l.from_user_id);
+          if (!other) continue;
+          allNotifs.push({
+            id: `like-${l.id}`,
+            type: "like",
+            name: other.name,
+            photo: other.photos?.[0] || "/placeholder.svg",
+            text: l.type === "superlike" ? "Deu superlike no seu perfil ⭐" : "Curtiu seu perfil ❤️",
+            time: timeAgo(l.created_at ?? ""),
+            read: false,
+            targetId: l.from_user_id,
+            sortDate: l.created_at ?? "",
+          });
+        }
+      }
+
+      // Sort by date descending
+      allNotifs.sort((a, b) => new Date(b.sortDate).getTime() - new Date(a.sortDate).getTime());
+      setNotifications(allNotifs);
+      setLoading(false);
+    };
+    fetchNotifications();
+  }, [user]);
 
   const handleTap = (notif: Notification) => {
     setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
@@ -48,6 +142,8 @@ const Notifications = () => {
   };
 
   const unread = notifications.filter(n => !n.read).length;
+
+  const markAllRead = () => setNotifications(prev => prev.map(n => ({ ...n, read: true })));
 
   return (
     <div className="min-h-screen bg-background dark">
@@ -63,44 +159,50 @@ const Notifications = () => {
         )}
       </div>
 
-      <div className="px-4 pt-3 space-y-1">
-        {notifications.map((notif, i) => (
-          <motion.button
-            key={notif.id}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.05 }}
-            onClick={() => handleTap(notif)}
-            className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-colors text-left ${
-              notif.read ? "hover:bg-muted/20" : "bg-primary/5 hover:bg-primary/10"
-            }`}
-          >
-            <div className="relative flex-shrink-0">
-              <img src={notif.photo} alt={notif.name} className="w-12 h-12 rounded-full object-cover" />
-              <div className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full ${bgFor(notif.type)} flex items-center justify-center border-2 border-background`}>
-                {iconFor(notif.type)}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <div className="px-4 pt-3 space-y-1">
+          {notifications.map((notif, i) => (
+            <motion.button
+              key={notif.id}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05 }}
+              onClick={() => handleTap(notif)}
+              className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-colors text-left ${
+                notif.read ? "hover:bg-muted/20" : "bg-primary/5 hover:bg-primary/10"
+              }`}
+            >
+              <div className="relative flex-shrink-0">
+                <img src={notif.photo} alt={notif.name} className="w-12 h-12 rounded-full object-cover" />
+                <div className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full ${bgFor(notif.type)} flex items-center justify-center border-2 border-background`}>
+                  {iconFor(notif.type)}
+                </div>
               </div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className={`text-sm ${notif.read ? "text-muted-foreground" : "text-foreground font-medium"}`}>
-                <span className="font-semibold text-foreground">{notif.name}</span>{" "}
-                {notif.text}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">{notif.time}</p>
-            </div>
-            {!notif.read && (
-              <div className="w-2 h-2 rounded-full gradient-uniavan-horizontal flex-shrink-0" />
-            )}
-          </motion.button>
-        ))}
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm ${notif.read ? "text-muted-foreground" : "text-foreground font-medium"}`}>
+                  <span className="font-semibold text-foreground">{notif.name}</span>{" "}
+                  {notif.text}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">{notif.time}</p>
+              </div>
+              {!notif.read && (
+                <div className="w-2 h-2 rounded-full gradient-uniavan-horizontal flex-shrink-0" />
+              )}
+            </motion.button>
+          ))}
 
-        {notifications.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <Heart className="w-12 h-12 text-muted-foreground/20 mb-4" />
-            <p className="text-muted-foreground text-sm">Nenhuma notificação ainda</p>
-          </div>
-        )}
-      </div>
+          {notifications.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <Heart className="w-12 h-12 text-muted-foreground/20 mb-4" />
+              <p className="text-muted-foreground text-sm">Nenhuma notificação ainda</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
