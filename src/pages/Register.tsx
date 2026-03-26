@@ -147,7 +147,7 @@ const Register = () => {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Código de Matrícula</label>
-              <Input placeholder="Ex: 2024010001" value={form.matricula} onChange={e => updateForm("matricula", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50" />
+              <Input placeholder="Ex: 2024010001" value={form.matricula} onChange={e => updateForm("matricula", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary" />
               <p className="text-xs text-muted-foreground">Seu código de matrícula da Uniavan</p>
             </div>
           </div>
