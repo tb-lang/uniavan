@@ -64,7 +64,7 @@ const BlockedUsers = () => {
               <motion.div
                 key={user.id}
                 initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: unblocking === user.id ? { opacity: 0 } : { opacity: 1 }, x: 0 }}
+                animate={{ opacity: unblocking === user.id ? 0 : 1, x: 0 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                 transition={{ delay: i * 0.05 }}
                 className="flex items-center gap-3 p-4 rounded-2xl bg-muted/20"
