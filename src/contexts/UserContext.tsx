@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface UserProfile {
   id: string;
@@ -10,37 +11,92 @@ export interface UserProfile {
   instagram: string;
   interests: string[];
   photos: string[];
+  email?: string;
+  is_active?: boolean;
+  vacation_mode?: boolean;
 }
 
 interface UserContextType {
-  user: UserProfile;
-  setUser: (user: UserProfile) => void;
+  user: UserProfile | null;
+  loading: boolean;
+  setUser: (user: UserProfile | null) => void;
+  refreshProfile: () => Promise<void>;
 }
 
-const DEFAULT_USER: UserProfile = {
-  id: "me",
-  name: "Carlos Eduardo",
-  age: 22,
-  course: "Administração",
-  period: "6º período",
-  bio: "Dev, gamer e amante de café. Sempre de bom humor e pronto para uma boa conversa 🎮☕",
-  instagram: "@carlosedu",
-  interests: ["🎮 Games", "💪 Academia", "🎵 Música", "🍕 Gastronomia", "📺 Séries"],
-  photos: [
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop",
-    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=500&fit=crop",
-    "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&h=500&fit=crop",
-  ],
-};
-
 const UserContext = createContext<UserContextType>({
-  user: DEFAULT_USER,
+  user: null,
+  loading: true,
   setUser: () => {},
+  refreshProfile: async () => {},
 });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<UserProfile>(DEFAULT_USER);
-  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (data && !error) {
+      setUser({
+        id: data.id,
+        name: data.name,
+        age: data.age ?? 0,
+        course: data.course ?? "",
+        period: data.period ?? "",
+        bio: data.bio ?? "",
+        instagram: data.instagram ?? "",
+        interests: data.interests ?? [],
+        photos: data.photos ?? [],
+        email: data.email,
+        is_active: data.is_active ?? true,
+        vacation_mode: data.vacation_mode ?? false,
+      });
+    } else {
+      setUser(null);
+    }
+    setLoading(false);
+  };
+
+  const refreshProfile = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      await fetchProfile(session.user.id);
+    }
+  };
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) {
+          setTimeout(() => fetchProfile(session.user.id), 0);
+        } else {
+          setUser(null);
+          setLoading(false);
+        }
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <UserContext.Provider value={{ user, loading, setUser, refreshProfile }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = () => useContext(UserContext);
