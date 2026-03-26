@@ -43,11 +43,6 @@ const BottomTabBar = () => {
                   className={`w-5 h-5 transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}
                   fill={isActive && tab.icon === Flame ? "currentColor" : "none"}
                 />
-                {tab.badge && tab.badge > 0 && !isActive && (
-                  <div className="absolute -top-1.5 -right-1.5 w-4 h-4 gradient-uniavan-horizontal rounded-full flex items-center justify-center">
-                    <span className="text-[9px] font-bold text-white">{tab.badge}</span>
-                  </div>
-                )}
               </div>
               <span className={`text-[10px] font-medium transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                 {tab.label}
