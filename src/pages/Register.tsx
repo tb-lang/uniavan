@@ -161,7 +161,7 @@ const Register = () => {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Data de nascimento</label>
-              <Input type="date" value={form.nascimento} onChange={e => updateForm("nascimento", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50" />
+              <Input type="date" value={form.nascimento} onChange={e => updateForm("nascimento", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary" />
             </div>
           </div>
         );
