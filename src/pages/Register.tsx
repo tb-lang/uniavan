@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Heart, Eye, EyeOff, Camera, Plus, X, Instagram } from "lucide-react";
+import { ArrowLeft, ArrowRight, Heart, Eye, EyeOff, Camera, Plus, X, Instagram, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const CURSOS_UNIAVAN = [
   "Administração", "Agronomia", "Arquitetura e Urbanismo", "Biomedicina",
@@ -26,8 +29,11 @@ const TOTAL_STEPS = 6;
 
 const Register = () => {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     email: "", password: "", matricula: "",
@@ -49,8 +55,77 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    navigate("/app");
+  const calculateAge = (birthDate: string): number => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age;
+  };
+
+  const handlePhotoUpload = async (file: File, index: number) => {
+    // We'll upload after signup when we have the user ID
+    const url = URL.createObjectURL(file);
+    const newFotos = [...form.fotos];
+    newFotos[index] = url;
+    updateForm("fotos", newFotos);
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const result = await signUp(form.email, form.password);
+      const userId = result.user?.id;
+      if (!userId) throw new Error("Erro ao criar conta");
+
+      // Upload photos to storage
+      const photoUrls: string[] = [];
+      for (let i = 0; i < form.fotos.length; i++) {
+        if (form.fotos[i] && form.fotos[i].startsWith("blob:")) {
+          const response = await fetch(form.fotos[i]);
+          const blob = await response.blob();
+          const ext = blob.type.split("/")[1] || "jpg";
+          const path = `${userId}/photo_${i}.${ext}`;
+          const { error: uploadError } = await supabase.storage
+            .from("avatars")
+            .upload(path, blob, { upsert: true });
+          if (!uploadError) {
+            const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
+            photoUrls.push(urlData.publicUrl);
+          }
+        } else if (form.fotos[i]) {
+          photoUrls.push(form.fotos[i]);
+        }
+      }
+
+      // Insert user profile
+      const { error: insertError } = await supabase.from("users").insert({
+        id: userId,
+        name: form.nome,
+        email: form.email,
+        age: form.nascimento ? calculateAge(form.nascimento) : null,
+        course: form.curso || null,
+        period: form.periodo ? `${form.periodo}º período` : null,
+        bio: form.bio || null,
+        instagram: form.instagram ? `@${form.instagram.replace("@", "")}` : null,
+        interests: form.interesses,
+        photos: photoUrls,
+      });
+
+      if (insertError) throw insertError;
+
+      toast({ title: "Conta criada!", description: "Bem-vindo ao Uniavan Connect 💜" });
+      navigate("/onboarding");
+    } catch (error: any) {
+      toast({
+        title: "Erro ao criar conta",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderStep = () => {
@@ -105,7 +180,7 @@ const Register = () => {
               <label className="text-sm font-medium text-foreground">Período</label>
               <select value={form.periodo} onChange={e => updateForm("periodo", e.target.value)} className="w-full h-12 rounded-xl bg-muted/50 border border-border/50 px-3 text-foreground text-sm">
                 <option value="">Selecione o período</option>
-                {[1,2,3,4,5,6,7,8,9,10].map(p => <option key={p} value={p}>{p}º período</option>)}
+                {[1,2,3,4,5,6,7,8,9,10].map(p => <option key={p} value={String(p)}>{p}º período</option>)}
               </select>
             </div>
           </div>
@@ -116,11 +191,29 @@ const Register = () => {
             <p className="text-sm text-muted-foreground">Adicione até 6 fotos. A primeira será sua foto principal.</p>
             <div className="grid grid-cols-3 gap-3">
               {[0, 1, 2, 3, 4, 5].map(i => (
-                <div key={i} className={`aspect-[3/4] rounded-2xl border-2 border-dashed flex items-center justify-center cursor-pointer transition-all ${i === 0 ? 'border-primary/50 bg-primary/5' : 'border-border/50 bg-muted/30'} hover:border-primary/70 hover:bg-primary/10`}>
+                <label key={i} className={`aspect-[3/4] rounded-2xl border-2 border-dashed flex items-center justify-center cursor-pointer transition-all ${i === 0 ? 'border-primary/50 bg-primary/5' : 'border-border/50 bg-muted/30'} hover:border-primary/70 hover:bg-primary/10`}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handlePhotoUpload(file, i);
+                    }}
+                  />
                   {form.fotos[i] ? (
                     <div className="relative w-full h-full">
                       <img src={form.fotos[i]} alt="" className="w-full h-full object-cover rounded-2xl" />
-                      <button className="absolute top-1 right-1 w-6 h-6 bg-destructive rounded-full flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const newFotos = form.fotos.filter((_, idx) => idx !== i);
+                          updateForm("fotos", newFotos);
+                        }}
+                        className="absolute top-1 right-1 w-6 h-6 bg-destructive rounded-full flex items-center justify-center"
+                      >
                         <X className="w-3 h-3 text-destructive-foreground" />
                       </button>
                     </div>
@@ -130,7 +223,7 @@ const Register = () => {
                       {i === 0 && <span className="text-[10px]">Principal</span>}
                     </div>
                   )}
-                </div>
+                </label>
               ))}
             </div>
           </div>
@@ -248,9 +341,12 @@ const Register = () => {
         <div className="mt-8">
           <Button
             onClick={() => step < TOTAL_STEPS ? setStep(step + 1) : handleSubmit()}
+            disabled={loading}
             className="w-full h-14 text-lg font-semibold rounded-2xl gradient-uniavan-horizontal text-white border-0 shadow-lg shadow-primary/30 transition-all duration-300"
           >
-            {step < TOTAL_STEPS ? (
+            {loading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : step < TOTAL_STEPS ? (
               <span className="flex items-center gap-2">Continuar <ArrowRight className="w-5 h-5" /></span>
             ) : (
               "Começar a conectar 💘"
