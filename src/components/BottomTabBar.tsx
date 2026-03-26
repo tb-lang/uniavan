@@ -2,13 +2,11 @@ import { Flame, MessageCircle, User, Settings, GraduationCap, Bell } from "lucid
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-const UNREAD_NOTIFS = 2;
-
 const tabs = [
   { path: "/app", icon: Flame, label: "Descobrir" },
-  { path: "/app/matches", icon: MessageCircle, label: "Matches", badge: 2 },
+  { path: "/app/matches", icon: MessageCircle, label: "Matches" },
   { path: "/app/services", icon: GraduationCap, label: "Serviços" },
-  { path: "/app/notifications", icon: Bell, label: "Avisos", badge: UNREAD_NOTIFS },
+  { path: "/app/notifications", icon: Bell, label: "Avisos" },
   { path: "/app/profile", icon: User, label: "Perfil" },
 ];
 
@@ -16,7 +14,7 @@ const BottomTabBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const hiddenPaths = ["/app/chat/", "/app/edit-profile", "/app/user/", "/app/filters", "/app/notifications"];
+  const hiddenPaths = ["/app/chat/", "/app/edit-profile", "/app/user/", "/app/filters"];
   const shouldHide = hiddenPaths.some(p => location.pathname.startsWith(p));
   if (shouldHide) return null;
 
@@ -45,11 +43,6 @@ const BottomTabBar = () => {
                   className={`w-5 h-5 transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}
                   fill={isActive && tab.icon === Flame ? "currentColor" : "none"}
                 />
-                {tab.badge && tab.badge > 0 && !isActive && (
-                  <div className="absolute -top-1.5 -right-1.5 w-4 h-4 gradient-uniavan-horizontal rounded-full flex items-center justify-center">
-                    <span className="text-[9px] font-bold text-white">{tab.badge}</span>
-                  </div>
-                )}
               </div>
               <span className={`text-[10px] font-medium transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                 {tab.label}
