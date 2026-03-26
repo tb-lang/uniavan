@@ -157,7 +157,7 @@ const Register = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Nome completo</label>
-              <Input placeholder="Como você quer ser chamado(a)" value={form.nome} onChange={e => updateForm("nome", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50" />
+              <Input placeholder="Como você quer ser chamado(a)" value={form.nome} onChange={e => updateForm("nome", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Data de nascimento</label>
