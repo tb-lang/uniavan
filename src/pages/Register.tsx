@@ -276,7 +276,7 @@ const Register = () => {
               <label className="text-sm font-medium text-foreground">Seu @ do Instagram (opcional)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">@</span>
-                <Input placeholder="seuinstagram" value={form.instagram} onChange={e => updateForm("instagram", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 pl-8" />
+                <Input placeholder="seuinstagram" value={form.instagram} onChange={e => updateForm("instagram", e.target.value)} className="h-12 rounded-xl bg-muted/50 border-border/50 pl-8 text-foreground placeholder:text-muted-foreground focus:border-primary" />
               </div>
             </div>
           </div>
