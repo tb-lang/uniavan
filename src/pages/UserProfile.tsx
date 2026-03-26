@@ -114,7 +114,15 @@ const UserProfile = () => {
     <div className="min-h-screen bg-background dark">
       {/* Header photo */}
       <div className="relative h-[55vh]">
-        <img src={photos[0] || "/placeholder.svg"} alt={profile.name} className="w-full h-full object-cover" />
+        {photos[0] ? (
+          <img src={photos[0]} alt={profile.name} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center gradient-uniavan">
+            <span className="text-7xl font-bold text-white/80 font-display">
+              {profile.name?.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() || "?"}
+            </span>
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
         <button

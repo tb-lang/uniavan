@@ -28,13 +28,24 @@ const SwipeCard = ({ profile, onSwipe, isTop }: { profile: DiscoverProfile; onSw
     else if (info.offset.x < -100) onSwipe("left");
   };
 
-  const photo = profile.photos?.[0] || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=800&fit=crop";
+  const photo = profile.photos?.[0];
+  const initials = profile.name?.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() || "?";
+
+  const PhotoPlaceholder = ({ className = "" }: { className?: string }) => (
+    <div className={`w-full h-full flex items-center justify-center gradient-uniavan ${className}`}>
+      <span className="text-5xl font-bold text-white/80 font-display">{initials}</span>
+    </div>
+  );
 
   if (!isTop) {
     return (
       <div className="absolute inset-0">
         <div className="w-full h-full rounded-3xl overflow-hidden">
-          <img src={photo} alt={profile.name} className="w-full h-full object-cover scale-[1.02]" />
+          {photo ? (
+            <img src={photo} alt={profile.name} className="w-full h-full object-cover scale-[1.02]" />
+          ) : (
+            <PhotoPlaceholder />
+          )}
         </div>
       </div>
     );
@@ -52,7 +63,11 @@ const SwipeCard = ({ profile, onSwipe, isTop }: { profile: DiscoverProfile; onSw
       exit={{ x: 300, opacity: 0, transition: { duration: 0.3 } }}
     >
       <div className="w-full h-full rounded-3xl overflow-hidden relative shadow-2xl shadow-black/30">
-        <img src={photo} alt={profile.name} className="w-full h-full object-cover" />
+        {photo ? (
+          <img src={photo} alt={profile.name} className="w-full h-full object-cover" />
+        ) : (
+          <PhotoPlaceholder />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
         <motion.div style={{ opacity: likeOpacity }} className="absolute top-8 left-6 px-4 py-2 border-4 border-green-400 rounded-xl rotate-[-20deg]">
