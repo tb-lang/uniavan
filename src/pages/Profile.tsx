@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Edit3, Instagram, BookOpen, Calendar, Loader2, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const Profile = () => {
   const navigate = useNavigate();
