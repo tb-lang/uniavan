@@ -74,6 +74,11 @@ const Profile = () => {
             ))}
           </div>
         </div>
+
+        <button onClick={handleLogout} className="w-full flex items-center gap-3 p-4 rounded-2xl hover:bg-muted/30 transition-colors text-left mt-6">
+          <LogOut className="w-5 h-5 text-muted-foreground" />
+          <span className="text-sm font-medium text-muted-foreground">Sair da conta</span>
+        </button>
       </div>
     </div>
   );
