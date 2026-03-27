@@ -1,6 +1,7 @@
 import { Flame, MessageCircle, User, Settings, GraduationCap, Bell } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 const tabs = [
   { path: "/app", icon: Flame, label: "Descobrir" },
@@ -13,6 +14,7 @@ const tabs = [
 const BottomTabBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { unreadCount } = useNotifications();
 
   const hiddenPaths = ["/app/chat/", "/app/edit-profile", "/app/user/", "/app/filters"];
   const shouldHide = hiddenPaths.some(p => location.pathname.startsWith(p));
@@ -43,6 +45,11 @@ const BottomTabBar = () => {
                   className={`w-5 h-5 transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}
                   fill={isActive && tab.icon === Flame ? "currentColor" : "none"}
                 />
+                {tab.icon === Bell && unreadCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </div>
               <span className={`text-[10px] font-medium transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                 {tab.label}

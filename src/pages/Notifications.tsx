@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Heart, MessageCircle, Star, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 type NotifType = "match" | "message" | "like";
 
@@ -45,8 +46,13 @@ const timeAgo = (dateStr: string) => {
 const Notifications = () => {
   const navigate = useNavigate();
   const { user } = useUser();
+  const { lastSeenAt, markAsSeen } = useNotifications();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    markAsSeen();
+  }, [markAsSeen]);
 
   useEffect(() => {
     if (!user) return;
@@ -82,7 +88,7 @@ const Notifications = () => {
             photo: other.photos?.[0] || "/placeholder.svg",
             text: "Deu match com você! 🎉",
             time: timeAgo(m.created_at ?? ""),
-            read: false,
+            read: new Date(m.created_at ?? 0).getTime() <= new Date(lastSeenAt).getTime(),
             targetId: otherId,
             sortDate: m.created_at ?? "",
           });
@@ -120,7 +126,7 @@ const Notifications = () => {
             photo: other.photos?.[0] || "/placeholder.svg",
             text: l.type === "superlike" ? "Deu superlike no seu perfil ⭐" : "Curtiu seu perfil ❤️",
             time: timeAgo(l.created_at ?? ""),
-            read: false,
+            read: new Date(l.created_at ?? 0).getTime() <= new Date(lastSeenAt).getTime(),
             targetId: l.from_user_id,
             sortDate: l.created_at ?? "",
           });
