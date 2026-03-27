@@ -46,8 +46,13 @@ const timeAgo = (dateStr: string) => {
 const Notifications = () => {
   const navigate = useNavigate();
   const { user } = useUser();
+  const { lastSeenAt, markAsSeen } = useNotifications();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    markAsSeen();
+  }, [markAsSeen]);
 
   useEffect(() => {
     if (!user) return;
