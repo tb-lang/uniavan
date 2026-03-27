@@ -259,30 +259,60 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_discover_profiles: {
-        Args: never
-        Returns: {
-          age: number | null
-          bio: string | null
-          course: string | null
-          created_at: string | null
-          email: string
-          id: string
-          instagram: string | null
-          interests: string[] | null
-          is_active: boolean | null
-          name: string
-          period: string | null
-          photos: string[] | null
-          vacation_mode: boolean | null
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "users"
-          isOneToOne: false
-          isSetofReturn: true
-        }
-      }
+      get_discover_profiles:
+        | {
+            Args: never
+            Returns: {
+              age: number | null
+              bio: string | null
+              course: string | null
+              created_at: string | null
+              email: string
+              id: string
+              instagram: string | null
+              interests: string[] | null
+              is_active: boolean | null
+              name: string
+              period: string | null
+              photos: string[] | null
+              vacation_mode: boolean | null
+            }[]
+            SetofOptions: {
+              from: "*"
+              to: "users"
+              isOneToOne: false
+              isSetofReturn: true
+            }
+          }
+        | {
+            Args: {
+              p_course?: string
+              p_max_age?: number
+              p_min_age?: number
+              p_period?: string
+            }
+            Returns: {
+              age: number | null
+              bio: string | null
+              course: string | null
+              created_at: string | null
+              email: string
+              id: string
+              instagram: string | null
+              interests: string[] | null
+              is_active: boolean | null
+              name: string
+              period: string | null
+              photos: string[] | null
+              vacation_mode: boolean | null
+            }[]
+            SetofOptions: {
+              from: "*"
+              to: "users"
+              isOneToOne: false
+              isSetofReturn: true
+            }
+          }
       get_match_with_profile: {
         Args: { p_match_id: string }
         Returns: {

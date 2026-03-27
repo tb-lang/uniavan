@@ -81,6 +81,12 @@ const UserProfile = () => {
       blocker_id: currentUser.id,
       blocked_id: userId,
     });
+    // Delete any existing match
+    const u1 = currentUser.id < userId ? currentUser.id : userId;
+    const u2 = currentUser.id < userId ? userId : currentUser.id;
+    await supabase.from("matches").delete()
+      .eq("user1_id", u1)
+      .eq("user2_id", u2);
     setSubmitting(false);
     setBlocked(true);
     setTimeout(() => {

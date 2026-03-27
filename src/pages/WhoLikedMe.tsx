@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Heart, Lock, Star, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, Star, Loader2, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 
@@ -18,22 +18,35 @@ const WhoLikedMe = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const [profiles, setProfiles] = useState<LikedMeProfile[]>([]);
-  const [liked, setLiked] = useState<string[]>([]);
+  const [likedBack, setLikedBack] = useState<Set<string>>(new Set());
+  const [newlyLiked, setNewlyLiked] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
-    fetchLikes();
+    fetchData();
   }, [user]);
 
-  const fetchLikes = async () => {
+  const fetchData = async () => {
     if (!user) return;
+
+    // Fetch likes received
     const { data: likes } = await supabase
       .from("likes")
       .select("*")
       .eq("to_user_id", user.id)
       .in("type", ["like", "superlike"])
       .order("created_at", { ascending: false });
+
+    // Fetch likes sent by current user to know who was liked back
+    const { data: myLikes } = await supabase
+      .from("likes")
+      .select("to_user_id")
+      .eq("from_user_id", user.id)
+      .in("type", ["like", "superlike"]);
+
+    const likedBackSet = new Set((myLikes || []).map(l => l.to_user_id));
+    setLikedBack(likedBackSet);
 
     if (!likes) { setLoading(false); return; }
 
@@ -62,13 +75,15 @@ const WhoLikedMe = () => {
 
   const handleLike = async (id: string) => {
     if (!user) return;
-    setLiked(prev => [...prev, id]);
+    setNewlyLiked(prev => [...prev, id]);
     await supabase.from("likes").insert({
       from_user_id: user.id,
       to_user_id: id,
       type: "like",
     });
   };
+
+  const isLikedBack = (id: string) => likedBack.has(id) || newlyLiked.includes(id);
 
   if (loading) {
     return (
@@ -100,7 +115,7 @@ const WhoLikedMe = () => {
           <p className="text-xs text-muted-foreground">Super Likes</p>
         </div>
         <div className="flex-1 bg-muted/20 rounded-2xl p-3 text-center">
-          <p className="text-2xl font-bold text-green-400">{liked.length}</p>
+          <p className="text-2xl font-bold text-green-400">{profiles.filter(p => isLikedBack(p.id)).length}</p>
           <p className="text-xs text-muted-foreground">Matches</p>
         </div>
       </motion.div>
@@ -113,10 +128,20 @@ const WhoLikedMe = () => {
       ) : (
         <div className="grid grid-cols-2 gap-3">
           {profiles.map((profile, i) => {
-            const isMatched = liked.includes(profile.id);
+            const matched = isLikedBack(profile.id);
             return (
               <motion.div key={profile.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.08 }} className="relative rounded-2xl overflow-hidden aspect-[3/4] bg-muted/20">
-                <img src={profile.photo} alt={profile.name} className="w-full h-full object-cover" />
+                {profile.photo ? (
+                  <img
+                    src={profile.photo}
+                    alt={matched ? profile.name : ""}
+                    className={`w-full h-full object-cover transition-all ${!matched ? "blur-md scale-105" : ""}`}
+                  />
+                ) : (
+                  <div className={`w-full h-full flex items-center justify-center gradient-uniavan ${!matched ? "blur-md" : ""}`}>
+                    <Camera className="w-10 h-10 text-white/50" />
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                 {profile.superLike && (
                   <div className="absolute top-3 left-3 flex items-center gap-1 bg-yellow-500/90 backdrop-blur-sm px-2 py-1 rounded-full">
@@ -125,9 +150,11 @@ const WhoLikedMe = () => {
                   </div>
                 )}
                 <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <p className="text-white font-semibold text-sm mb-1">{profile.name}, {profile.age}</p>
+                  <p className="text-white font-semibold text-sm mb-1">
+                    {matched ? `${profile.name}, ${profile.age}` : `${"•".repeat(profile.name.length)}, ${profile.age}`}
+                  </p>
                   <p className="text-white/60 text-xs mb-2">{profile.course}</p>
-                  {isMatched ? (
+                  {matched ? (
                     <button onClick={() => navigate(`/app/chat/${profile.id}`)} className="w-full h-8 rounded-xl gradient-uniavan-horizontal text-white text-xs font-semibold">💬 Enviar mensagem</button>
                   ) : (
                     <button onClick={() => handleLike(profile.id)} className="w-full h-8 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center gap-1 text-white text-xs font-semibold hover:bg-white/30 transition-colors">
