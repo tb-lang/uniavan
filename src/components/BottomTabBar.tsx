@@ -14,6 +14,7 @@ const tabs = [
 const BottomTabBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { unreadCount } = useNotifications();
 
   const hiddenPaths = ["/app/chat/", "/app/edit-profile", "/app/user/", "/app/filters"];
   const shouldHide = hiddenPaths.some(p => location.pathname.startsWith(p));
