@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Instagram, BookOpen, Calendar, MessageCircle, Flag, UserX, MoreVertical, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowLeft, Instagram, BookOpen, Calendar, Heart, X, Flag, UserX, MoreVertical, CheckCircle2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 
@@ -39,23 +39,85 @@ const UserProfile = () => {
   const [blocked, setBlocked] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (!userId) return;
-    const fetchProfile = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", userId)
-        .maybeSingle();
+  // Interaction state
+  const [alreadyInteracted, setAlreadyInteracted] = useState(false);
+  const [hasMatch, setHasMatch] = useState(false);
+  const [showMatch, setShowMatch] = useState(false);
+  const [interacting, setInteracting] = useState(false);
 
-      if (data && !error) {
-        setProfile(data as ProfileData);
+  useEffect(() => {
+    if (!userId || !currentUser) return;
+
+    const fetchAll = async () => {
+      setLoading(true);
+
+      // Fetch profile, check prior interaction, check existing match in parallel
+      const u1 = currentUser.id < userId ? currentUser.id : userId;
+      const u2 = currentUser.id < userId ? userId : currentUser.id;
+
+      const [profileRes, likeRes, matchRes] = await Promise.all([
+        supabase.from("users").select("*").eq("id", userId).maybeSingle(),
+        supabase.from("likes").select("id").eq("from_user_id", currentUser.id).eq("to_user_id", userId).maybeSingle(),
+        supabase.from("matches").select("id").eq("user1_id", u1).eq("user2_id", u2).maybeSingle(),
+      ]);
+
+      if (profileRes.data && !profileRes.error) {
+        setProfile(profileRes.data as ProfileData);
+      }
+      if (likeRes.data) {
+        setAlreadyInteracted(true);
+      }
+      if (matchRes.data) {
+        setHasMatch(true);
+        setAlreadyInteracted(true);
       }
       setLoading(false);
     };
-    fetchProfile();
-  }, [userId]);
+    fetchAll();
+  }, [userId, currentUser]);
+
+  const handleLike = async () => {
+    if (!currentUser || !userId || interacting) return;
+    setInteracting(true);
+
+    await supabase.from("likes").insert({
+      from_user_id: currentUser.id,
+      to_user_id: userId,
+      type: "like",
+    });
+
+    // Wait for trigger to create match
+    await new Promise(r => setTimeout(r, 300));
+
+    const u1 = currentUser.id < userId ? currentUser.id : userId;
+    const u2 = currentUser.id < userId ? userId : currentUser.id;
+    const { data: matchData } = await supabase
+      .from("matches").select("id").eq("user1_id", u1).eq("user2_id", u2).maybeSingle();
+
+    if (matchData) {
+      setHasMatch(true);
+      setShowMatch(true);
+    } else {
+      navigate(-1);
+    }
+
+    setAlreadyInteracted(true);
+    setInteracting(false);
+  };
+
+  const handlePass = async () => {
+    if (!currentUser || !userId || interacting) return;
+    setInteracting(true);
+
+    await supabase.from("likes").insert({
+      from_user_id: currentUser.id,
+      to_user_id: userId,
+      type: "dislike",
+    });
+
+    setInteracting(false);
+    navigate(-1);
+  };
 
   const handleReport = async () => {
     if (!selectedReason || !currentUser || !userId) return;
@@ -81,7 +143,6 @@ const UserProfile = () => {
       blocker_id: currentUser.id,
       blocked_id: userId,
     });
-    // Delete any existing match
     const u1 = currentUser.id < userId ? currentUser.id : userId;
     const u2 = currentUser.id < userId ? userId : currentUser.id;
     await supabase.from("matches").delete()
@@ -183,15 +244,35 @@ const UserProfile = () => {
       </div>
 
       <div className="px-5 pb-24 pt-4">
-        {/* Ações */}
+        {/* Action buttons */}
         <div className="flex gap-3 mb-6">
-          <button
-            onClick={() => navigate(`/app/chat/${userId}`)}
-            className="flex-1 h-12 rounded-2xl gradient-uniavan-horizontal flex items-center justify-center gap-2 text-white font-semibold shadow-lg shadow-primary/20"
-          >
-            <MessageCircle className="w-5 h-5" />
-            Enviar mensagem
-          </button>
+          {!alreadyInteracted ? (
+            <>
+              <button
+                onClick={handlePass}
+                disabled={interacting}
+                className="w-14 h-14 rounded-full bg-muted/50 border border-border/50 flex items-center justify-center shadow-lg hover:bg-destructive/20 hover:border-destructive/50 transition-all active:scale-90 disabled:opacity-50"
+              >
+                <X className="w-7 h-7 text-destructive" />
+              </button>
+              <button
+                onClick={handleLike}
+                disabled={interacting}
+                className="flex-1 h-14 rounded-2xl gradient-uniavan-horizontal flex items-center justify-center gap-2 text-white font-semibold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
+              >
+                <Heart className="w-6 h-6 fill-white" />
+                Curtir
+              </button>
+            </>
+          ) : hasMatch ? (
+            <button
+              onClick={() => navigate(`/app/chat/${userId}`)}
+              className="flex-1 h-12 rounded-2xl gradient-uniavan-horizontal flex items-center justify-center gap-2 text-white font-semibold shadow-lg shadow-primary/20"
+            >
+              <Heart className="w-5 h-5" />
+              Enviar mensagem
+            </button>
+          ) : null}
           {profile.instagram && (
             <a
               href={`https://instagram.com/${String(profile.instagram).replace("@", "")}`}
@@ -212,7 +293,7 @@ const UserProfile = () => {
           </div>
         )}
 
-        {/* Interesses */}
+        {/* Interests */}
         {interests.length > 0 && (
           <div className="mb-6">
             <h2 className="text-sm font-semibold text-muted-foreground mb-2">Interesses</h2>
@@ -226,7 +307,7 @@ const UserProfile = () => {
           </div>
         )}
 
-        {/* Fotos */}
+        {/* Photos */}
         {photos.length > 0 && (
           <div className="mb-6">
             <h2 className="text-sm font-semibold text-muted-foreground mb-2">Fotos</h2>
@@ -246,6 +327,32 @@ const UserProfile = () => {
           </div>
         )}
       </div>
+
+      {/* Match Overlay */}
+      <AnimatePresence>
+        {showMatch && profile && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md px-6">
+            <motion.div initial={{ scale: 0.5, y: 50 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.5, opacity: 0 }} className="text-center">
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring", bounce: 0.5 }} className="text-6xl mb-4">🎉</motion.div>
+              <h2 className="text-4xl font-bold font-display text-gradient-uniavan mb-2">É um match!</h2>
+              <p className="text-white/70 mb-8">Você e {profile.name} se curtiram</p>
+              <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary shadow-lg shadow-primary/30">
+                  <img src={currentUser?.photos?.[0] || ""} alt="Você" className="w-full h-full object-cover" />
+                </div>
+                <Heart className="w-8 h-8 text-primary fill-primary animate-pulse" />
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary shadow-lg shadow-primary/30">
+                  <img src={photos[0] || ""} alt={profile.name} className="w-full h-full object-cover" />
+                </div>
+              </div>
+              <div className="space-y-3">
+                <button onClick={() => { setShowMatch(false); navigate(`/app/chat/${userId}`); }} className="w-full h-12 rounded-2xl gradient-uniavan-horizontal text-white font-semibold shadow-lg">Enviar mensagem</button>
+                <button onClick={() => setShowMatch(false)} className="w-full h-12 rounded-2xl bg-white/10 text-white font-medium">Continuar vendo</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Report Modal */}
       <AnimatePresence>
