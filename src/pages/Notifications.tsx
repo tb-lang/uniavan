@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Heart, MessageCircle, Star, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 type NotifType = "match" | "message" | "like";
 
