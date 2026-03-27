@@ -1,37 +1,28 @@
 
 
-# Habilitar badge de notificações no ícone de sino
+# Adicionar botões Curtir/Passar no UserProfile com lógica de match
 
 ## Problema
-O BottomTabBar não mostra quantas notificações novas existem. Na página de Notificações, todas são marcadas como `read: false` por padrão (sem persistência). Não há como o sino saber quantas notificações são novas.
+O `UserProfile.tsx` atualmente mostra apenas "Enviar mensagem" e Instagram. Não tem ações de curtir/passar. Quando o usuário clica numa notificação de curtida, vai para essa página mas não consegue curtir de volta — o fluxo esperado estilo Tinder.
 
 ## Solução
 
-Usar **localStorage** para guardar o timestamp da última vez que o usuário abriu a tela de Notificações. Qualquer like/match mais recente que esse timestamp é considerado "não lido".
+### `src/pages/UserProfile.tsx`
 
-### 1. Criar `src/contexts/NotificationContext.tsx`
-- Context que busca a contagem de likes recebidos + matches com `created_at` maior que o `lastSeenAt` salvo no localStorage
-- Expõe `unreadCount` e `markAsSeen()` (que atualiza o timestamp no localStorage)
-- Usa Supabase Realtime para escutar inserts na tabela `likes` (onde `to_user_id = user.id`) e incrementar o contador em tempo real
-- Refetch periódico a cada 60s como fallback
+1. **Substituir a seção de ações** (linhas 186-205): trocar "Enviar mensagem" por dois botões — "Passar" (X) e "Curtir" (Heart) — no mesmo estilo visual do Discover
+2. **Adicionar lógica de like/pass**: inserir na tabela `likes` ao clicar, verificar match (mesma lógica do Discover), e mostrar overlay de match se houver
+3. **Adicionar overlay de match**: reutilizar o mesmo design do Discover ("É um match!" com botão de mensagem e "Continuar")
+4. **Adicionar estado `alreadyInteracted`**: ao montar, verificar se o usuário já curtiu/passou esse perfil. Se sim, esconder os botões de ação e mostrar "Enviar mensagem" (caso já tenha match) ou nada
+5. **Importar** `Heart`, `X` do lucide-react
 
-### 2. Atualizar `src/App.tsx`
-- Envolver o app com `<NotificationProvider>` (dentro de `<UserProvider>`)
+### Fluxo completo
+- Notificação de curtida → clica → abre UserProfile com botões Curtir/Passar
+- Curtir → insert like → aguarda 300ms → verifica match → se match, mostra overlay
+- Passar → insert dislike → navega de volta
+- Se já interagiu antes, mostra interface padrão (mensagem se match, senão só perfil)
 
-### 3. Atualizar `src/components/BottomTabBar.tsx`
-- Importar `useNotifications()` do contexto
-- No tab "Avisos" (Bell), renderizar um badge vermelho com o número quando `unreadCount > 0`
-
-### 4. Atualizar `src/pages/Notifications.tsx`
-- Chamar `markAsSeen()` ao montar a página (useEffect)
-- Usar o `lastSeenAt` para determinar quais notificações são `read: true` vs `read: false`
-
-## Resumo de arquivos
-
-| Arquivo | Ação |
-|---|---|
-| `src/contexts/NotificationContext.tsx` | Criar — context com contagem e realtime |
-| `src/App.tsx` | Adicionar NotificationProvider |
-| `src/components/BottomTabBar.tsx` | Mostrar badge com unreadCount |
-| `src/pages/Notifications.tsx` | Chamar markAsSeen + usar lastSeenAt para read state |
+### Detalhes técnicos
+- Query inicial: `supabase.from("likes").select("id").eq("from_user_id", currentUser.id).eq("to_user_id", userId).maybeSingle()` para checar interação prévia
+- Query de match: mesma lógica do Discover com ordenação de IDs `u1 < u2`
+- Manter "Enviar mensagem" visível apenas se já houver match entre os dois
 
