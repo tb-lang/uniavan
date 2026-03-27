@@ -8,6 +8,12 @@ import { useAuth } from "@/hooks/useAuth";
 const Profile = () => {
   const navigate = useNavigate();
   const { user, loading } = useUser();
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   if (loading || !user) {
     return (
