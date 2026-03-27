@@ -88,7 +88,7 @@ const Notifications = () => {
             photo: other.photos?.[0] || "/placeholder.svg",
             text: "Deu match com você! 🎉",
             time: timeAgo(m.created_at ?? ""),
-            read: false,
+            read: new Date(m.created_at ?? 0).getTime() <= new Date(lastSeenAt).getTime(),
             targetId: otherId,
             sortDate: m.created_at ?? "",
           });
