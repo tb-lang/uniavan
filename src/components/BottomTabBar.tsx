@@ -1,6 +1,7 @@
 import { Flame, MessageCircle, User, Settings, GraduationCap, Bell } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 const tabs = [
   { path: "/app", icon: Flame, label: "Descobrir" },
