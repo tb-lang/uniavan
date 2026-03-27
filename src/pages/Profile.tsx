@@ -1,12 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Edit3, Instagram, BookOpen, Calendar, Loader2 } from "lucide-react";
+import { Edit3, Instagram, BookOpen, Calendar, Loader2, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { user, loading } = useUser();
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   if (loading || !user) {
     return (
@@ -67,6 +74,11 @@ const Profile = () => {
             ))}
           </div>
         </div>
+
+        <button onClick={handleLogout} className="w-full flex items-center gap-3 p-4 rounded-2xl hover:bg-muted/30 transition-colors text-left mt-6">
+          <LogOut className="w-5 h-5 text-muted-foreground" />
+          <span className="text-sm font-medium text-muted-foreground">Sair da conta</span>
+        </button>
       </div>
     </div>
   );
