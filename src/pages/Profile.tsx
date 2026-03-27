@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Edit3, Instagram, BookOpen, Calendar, Loader2 } from "lucide-react";
+import { Edit3, Instagram, BookOpen, Calendar, Loader2, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
 
