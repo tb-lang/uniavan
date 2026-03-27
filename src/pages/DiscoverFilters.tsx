@@ -24,7 +24,13 @@ const DiscoverFilters = () => {
   };
 
   const apply = () => {
-    navigate("/app");
+    const params = new URLSearchParams();
+    if (course !== "Todos") params.set("course", course);
+    if (period !== "Todos") params.set("period", period);
+    if (ageRange[0] !== 18) params.set("minAge", String(ageRange[0]));
+    if (ageRange[1] !== 30) params.set("maxAge", String(ageRange[1]));
+    const qs = params.toString();
+    navigate(qs ? `/app?${qs}` : "/app");
   };
 
   return (

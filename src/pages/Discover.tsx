@@ -99,6 +99,7 @@ const SwipeCard = ({ profile, onSwipe, isTop }: { profile: DiscoverProfile; onSw
 
 const Discover = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useUser();
   const [profiles, setProfiles] = useState<DiscoverProfile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -107,7 +108,13 @@ const Discover = () => {
 
   const fetchProfiles = async () => {
     setLoading(true);
-    const { data, error } = await supabase.rpc("get_discover_profiles");
+    const rpcParams: Record<string, string | number | null> = {
+      p_course: searchParams.get("course") || null,
+      p_period: searchParams.get("period") || null,
+      p_min_age: searchParams.has("minAge") ? Number(searchParams.get("minAge")) : null,
+      p_max_age: searchParams.has("maxAge") ? Number(searchParams.get("maxAge")) : null,
+    };
+    const { data, error } = await supabase.rpc("get_discover_profiles", rpcParams);
     if (data && !error) {
       setProfiles(data as DiscoverProfile[]);
     }
@@ -116,7 +123,7 @@ const Discover = () => {
 
   useEffect(() => {
     fetchProfiles();
-  }, []);
+  }, [searchParams]);
 
   const handleSwipe = async (direction: "left" | "right" | "super") => {
     const swiped = profiles[profiles.length - 1];
